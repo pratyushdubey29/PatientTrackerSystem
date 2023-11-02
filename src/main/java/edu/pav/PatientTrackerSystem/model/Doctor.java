@@ -1,46 +1,47 @@
 package edu.pav.PatientTrackerSystem.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
-@ToString
 @Entity
 @Table(name = "Doctors")
-@Getter
+@Data
+@NoArgsConstructor
 public class Doctor {
 
     @Id
+    @Column(name = "doctor_id")
+    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long doctorId;
 
-    private String DOB;
+    private String dob;
 
     private String name;
 
     private String hospital;
 
-    private String specialty;
+    private String speciality;
 
     private String address;
 
-    private Long mobile;
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
     private String email;
 
-    public Doctor(String DOB, String name, String hospital, String specialty, String address, Long mobile, String email) {
-        this.DOB = DOB;
+    public Doctor(String dob, String name, String hospital, String speciality, String address, String phoneNumber, String email) {
+        this.dob = dob;
         this.name = name;
         this.hospital = hospital;
-        this.specialty = specialty;
+        this.speciality = speciality;
         this.address = address;
-        this.mobile = mobile;
+        this.phoneNumber = phoneNumber;
         this.email = email;
     }
 
-    public void setDOB(String DOB) {
-        this.DOB = DOB;
+    public void setDob(String dob) {
+        this.dob = dob;
     }
 
     public void setName(String name) {
@@ -51,16 +52,16 @@ public class Doctor {
         this.hospital = hospital;
     }
 
-    public void setSpecialty(String specialty) {
-        this.specialty = specialty;
+    public void setSpeciality(String speciality) {
+        this.speciality = speciality;
     }
 
     public void setAddress(String address) {
         this.address = address;
     }
 
-    public void setMobile(Long mobile) {
-        this.mobile = mobile;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public void setEmail(String email) {

@@ -1,34 +1,24 @@
-CREATE DATABASE IF NOT EXISTS PATIENT_TRACKER;
-USE PATIENT_TRACKER;
+CREATE DATABASE IF NOT EXISTS PATIENT_TRACKER_DB;
+USE PATIENT_TRACKER_DB;
 
 -- Create the Doctor table
-CREATE TABLE Doctor (
+CREATE TABLE DOCTORS (
     doctor_id INT PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    specialty VARCHAR(100)
+    name VARCHAR(50),
+    dob VARCHAR(50),
+    hospital VARCHAR(50),
+    speciality VARCHAR(100),
+    address VARCHAR(100),
+    phone_number VARCHAR(13),
+    email VARCHAR(50)
 );
 
--- Create the Patient table
-CREATE TABLE Patient (
-    patient_id INT PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    date_of_birth DATE,
-    gender VARCHAR(10),
-    contact_number VARCHAR(15)
-);
 
--- Create the Doctor login table
-CREATE TABLE DoctorLogin (
-    doctor_id INT PRIMARY KEY,
-    username VARCHAR(50) UNIQUE,
-    password VARCHAR(255) -- Use appropriate hashing and encryption for password
-);
-
--- Create the Patient login table
-CREATE TABLE PatientLogin (
-    patient_id INT PRIMARY KEY,
-    username VARCHAR(50) UNIQUE,
-    password VARCHAR(255) -- Use appropriate hashing and encryption for password
-);
+-- Insert 5 random rows into the DOCTORS table
+INSERT INTO DOCTORS (doctor_id, name, dob, hospital, speciality, address, phone_number, email)
+VALUES
+    (1, 'Dr. John Smith', '1980-05-15', 'St. Mary Hospital', 'Cardiologist', '123 Main St, Cityville', '555-123-4567', 'dr.john.smith@example.com'),
+    (2, 'Dr. Jane Doe', '1975-08-20', 'City General Hospital', 'Pediatrician', '456 Elm St, Townville', '555-234-5678', 'dr.jane.doe@example.com'),
+    (3, 'Dr. Michael Brown', '1990-03-10', 'County Medical Center', 'Dermatologist', '789 Oak St, Villageton', '555-345-6789', 'dr.michael.brown@example.com'),
+    (4, 'Dr. Sarah Johnson', '1988-12-05', 'City Health Clinic', 'Gynecologist', '101 Pine St, Hamletville', '555-456-7890', 'dr.sarah.johnson@example.com'),
+    (5, 'Dr. Robert Lee', '1972-06-30', 'Hillside Medical Group', 'Orthopedic Surgeon', '246 Birch St, Countryside', '555-567-8901', 'dr.robert.lee@example.com');
