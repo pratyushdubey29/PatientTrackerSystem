@@ -30,7 +30,10 @@ public class Doctor {
 
     private String email;
 
-    public Doctor(String dob, String name, String hospital, String speciality, String address, String phoneNumber, String email) {
+    @Column(name = "is_approved")
+    private Boolean isApproved;
+
+    public Doctor(String dob, String name, String hospital, String speciality, String address, String phoneNumber, String email, Boolean isApproved) {
         this.dob = dob;
         this.name = name;
         this.hospital = hospital;
@@ -38,6 +41,7 @@ public class Doctor {
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.email = email;
+        this.isApproved = isApproved;
     }
 
     public void setDob(String dob) {
@@ -66,5 +70,9 @@ public class Doctor {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setApproved(Boolean approved) {
+        isApproved = approved;
     }
 }
