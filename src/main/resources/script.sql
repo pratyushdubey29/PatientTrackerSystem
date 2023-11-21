@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS PATIENT_TRACKER_DB;
 USE PATIENT_TRACKER_DB;
 
 -- Create the Doctor table
-CREATE TABLE DOCTORS (
+CREATE TABLE doctors (
     doctor_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50),
     dob VARCHAR(50),
@@ -14,7 +14,7 @@ CREATE TABLE DOCTORS (
     is_approved BOOL
 );
 
-CREATE TABLE CASES (
+CREATE TABLE cases (
     case_id INT AUTO_INCREMENT PRIMARY KEY,
     patient_id INT,
     doctor_id INT,
@@ -27,7 +27,7 @@ CREATE TABLE CASES (
 
 
 -- Insert 5 random rows into the DOCTORS table
-INSERT INTO DOCTORS (doctor_id, name, dob, hospital, speciality, address, phone_number, email, is_approved)
+INSERT INTO doctors (doctor_id, name, dob, hospital, speciality, address, phone_number, email, is_approved)
 VALUES
     (1, 'Dr. John Smith', '1980-05-15', 'St. Mary Hospital', 'Cardiologist', '123 Main St, Cityville', '555-123-4567', 'dr.john.smith@example.com', False),
     (2, 'Dr. Jane Doe', '1975-08-20', 'City General Hospital', 'Pediatrician', '456 Elm St, Townville', '555-234-5678', 'dr.jane.doe@example.com', True),
@@ -35,7 +35,7 @@ VALUES
     (4, 'Dr. Sarah Johnson', '1988-12-05', 'City Health Clinic', 'Gynecologist', '101 Pine St, Hamletville', '555-456-7890', 'dr.sarah.johnson@example.com', True),
     (5, 'Dr. Robert Lee', '1972-06-30', 'Hillside Medical Group', 'Orthopedic Surgeon', '246 Birch St, Countryside', '555-567-8901', 'dr.robert.lee@example.com', False);
 
-INSERT INTO CASES (case_id, patient_id, doctor_id, open_date, close_date, symptoms, medicines, cost)
+INSERT INTO cases (case_id, patient_id, doctor_id, open_date, close_date, symptoms, medicines, cost)
 VALUES
     (1, 1, 2, '2023-01-02', '2023-03-02', 'Cold', 'Levocetirizine', '500.20'),
     (2, 2, 4, '2023-02-10', '2023-04-12', 'Cramps', 'Ibuprofen', '610.20'),

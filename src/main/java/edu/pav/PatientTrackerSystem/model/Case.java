@@ -1,10 +1,13 @@
 package edu.pav.PatientTrackerSystem.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table(name = "Cases")
+@Table(name = "cases")
 @Data
 @NoArgsConstructor
 public class Case {

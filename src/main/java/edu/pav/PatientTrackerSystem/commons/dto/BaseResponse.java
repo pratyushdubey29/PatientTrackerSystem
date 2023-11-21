@@ -11,6 +11,6 @@ import org.springframework.http.HttpStatus;
 public class BaseResponse<T> {
 
     HttpStatus status;
-    String errorMsg;
+    String msg;
     T body;
 }
