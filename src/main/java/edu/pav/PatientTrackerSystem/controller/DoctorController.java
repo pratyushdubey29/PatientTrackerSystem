@@ -46,20 +46,15 @@ public class DoctorController {
         name = (name != null) ? name : "";
         address = (address != null) ? address : "";
 
-//        if (speciality.isEmpty() && name.isEmpty() && address.isEmpty()) {
-//            return Collections.emptyList();
-//        }
         List<Doctor> responseList = doctorRepository.find(speciality, name, address);
         return filterDoctorByStatus(responseList, true);
     }
 
-    @RequestMapping(path = "/doctors/findMatchBySome", method = RequestMethod.GET)
-    public List<Doctor> findDoctorMatchBySome(@RequestParam(required = false) String speciality,
-                                              @RequestParam(required = false) String name,
-                                              @RequestParam(required = false) String address) {
-        List<Doctor> responseList = doctorRepository.findBySpecialityContainingOrNameContainingOrAddressContaining(
-                speciality, name, address);
-        return filterDoctorByStatus(responseList, true);
+    @DeleteMapping(value = "/doctors/{id}")
+    public void deleteDoctor(@PathVariable("id") Long id){
+        if(id != null){
+            doctorRepository.deleteById(id);
+        }
     }
 
     private List<Doctor> filterDoctorByStatus(List<Doctor> inputDoctors, boolean approvalStatus) {
