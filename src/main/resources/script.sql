@@ -3,7 +3,7 @@ USE PATIENT_TRACKER_DB;
 
 -- Create the Doctor table
 CREATE TABLE DOCTORS (
-    doctor_id INT PRIMARY KEY,
+    doctor_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50),
     dob VARCHAR(50),
     hospital VARCHAR(50),
@@ -15,7 +15,7 @@ CREATE TABLE DOCTORS (
 );
 
 CREATE TABLE CASES (
-    case_id INT PRIMARY KEY,
+    case_id INT AUTO_INCREMENT PRIMARY KEY,
     patient_id INT,
     doctor_id INT,
     open_date VARCHAR(50),
