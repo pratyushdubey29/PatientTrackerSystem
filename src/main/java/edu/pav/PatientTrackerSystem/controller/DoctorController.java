@@ -51,18 +51,15 @@ public class DoctorController {
     }
 
     @DeleteMapping(value = "/doctors/{id}")
-    public void deleteDoctor(@PathVariable("id") Long id){
-        if(id != null){
+    public void deleteDoctor(@PathVariable("id") Long id) {
+        if (id != null) {
             doctorRepository.deleteById(id);
         }
     }
 
     private List<Doctor> filterDoctorByStatus(List<Doctor> inputDoctors, boolean approvalStatus) {
-        if (approvalStatus) {
-            return inputDoctors.stream().filter(Doctor::getIsApproved).collect(Collectors.toList());
-        } else {
-            return inputDoctors.stream().filter(doctor -> !doctor.getIsApproved()).collect(Collectors.toList());
-        }
-
+        return inputDoctors.stream()
+                .filter(doctor -> doctor.getIsApproved() == approvalStatus)
+                .collect(Collectors.toList());
     }
 }
