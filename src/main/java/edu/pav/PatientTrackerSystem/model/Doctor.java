@@ -2,11 +2,13 @@ package edu.pav.PatientTrackerSystem.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "doctors")
 @Data
 @NoArgsConstructor
+@SuperBuilder
 public class Doctor {
 
     @Id
@@ -42,37 +44,5 @@ public class Doctor {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.isApproved = isApproved;
-    }
-
-    public void setDob(String dob) {
-        this.dob = dob;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setHospital(String hospital) {
-        this.hospital = hospital;
-    }
-
-    public void setSpeciality(String speciality) {
-        this.speciality = speciality;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setApproved(Boolean approved) {
-        isApproved = approved;
     }
 }
