@@ -12,4 +12,6 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             "AND d.name LIKE CONCAT('%', :name,'%') " +
             "AND d.address LIKE CONCAT('%', :address,'%')")
     List<Doctor> find(String speciality, String name, String address);
+
+    Doctor findByEmail(String email);
 }

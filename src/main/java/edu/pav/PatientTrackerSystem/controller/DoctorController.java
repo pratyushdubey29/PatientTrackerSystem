@@ -1,8 +1,13 @@
 package edu.pav.PatientTrackerSystem.controller;
 
 import edu.pav.PatientTrackerSystem.commons.dto.BaseResponse;
+import edu.pav.PatientTrackerSystem.commons.dto.DoctorSignupRequest;
 import edu.pav.PatientTrackerSystem.model.Doctor;
+import edu.pav.PatientTrackerSystem.model.DoctorsLogin;
+import edu.pav.PatientTrackerSystem.model.UserLoginKey;
 import edu.pav.PatientTrackerSystem.repository.DoctorRepository;
+import edu.pav.PatientTrackerSystem.repository.DoctorSignupRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +21,10 @@ public class DoctorController {
 
     @Autowired
     DoctorRepository doctorRepository;
+
+    @Autowired
+    DoctorSignupRepository doctorSignupRepository;
+
 
     @GetMapping(value = "/doctors")
     public BaseResponse<List<Doctor>> getAllApprovedDoctors() {
@@ -62,5 +71,47 @@ public class DoctorController {
         return inputDoctors.stream()
                 .filter(doctor -> doctor.getIsApproved() == approvalStatus)
                 .collect(Collectors.toList());
+    }
+
+    private Boolean existsDoctor(String email) {
+        return doctorRepository.findByEmail(email) != null;
+    }
+
+    @Transactional
+    @PostMapping(value = "/doctors/signup")
+    public BaseResponse<String> signup(@RequestBody DoctorSignupRequest request) {
+
+        if(existsDoctor(request.getEmail())) {
+            return BaseResponse.<String>builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .msg("Doctor with this email already exists")
+                    .body("Failed persisting")
+                    .build();
+        }
+
+        Doctor doctor = Doctor.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .address(request.getAddress())
+                .hospital(request.getHospital())
+                .dob(request.getDob())
+                .speciality(request.getSpeciality())
+                .phoneNumber(request.getPhoneNumber())
+                .isApproved(Boolean.FALSE)
+                .build();
+
+        doctor = doctorRepository.save(doctor);
+
+        DoctorsLogin signupDetails = DoctorsLogin.builder()
+                .loginKey(UserLoginKey.builder()
+                        .userId(doctor.getDoctorId())
+                        .userName(doctor.getEmail())
+                        .build())
+                .password(request.getPassword())
+                .build();
+
+        doctorSignupRepository.save(signupDetails);
+
+        return new BaseResponse<>(HttpStatus.OK, "Success!", "persistence was successful!");
     }
 }
