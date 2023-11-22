@@ -17,4 +17,5 @@ public final class Constants {
     public static final String CANNOT_EDIT_PAST_APPOINTMENT = "Can not edit past appointments!";
     public static final String SLOT_ALREADY_BOOKED_STRING =  "Requested slot is already booked for ";
     public static final String RESCHEDULE_SUCCESSFUL = "Requested reschedule was successful!";
+    public static final String SCHEDULE_APPOINTMENT_SUCCESSFUL = "Requested appointment was successfully scheduled!";
 }

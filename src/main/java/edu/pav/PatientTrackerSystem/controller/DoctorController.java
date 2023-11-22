@@ -52,7 +52,7 @@ public class DoctorController {
                 doctorRepository.find(speciality, name, address), true));
     }
 
-    @DeleteMapping(value = "/doctors/{id}")
+//    @DeleteMapping(value = "/doctors/{id}")
     private void deleteDoctor(@PathVariable("id") Long id) {
         if (id != null) {
             doctorRepository.deleteById(id);
