@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -77,6 +79,33 @@ public class DoctorController {
         return doctorRepository.findByEmail(email) != null;
     }
 
+    private String encryptString(String password) {
+        try
+        {
+            /* MessageDigest instance for MD5. */
+            MessageDigest m = MessageDigest.getInstance("MD5");
+
+            /* Add plain-text password bytes to digest using MD5 update() method. */
+            m.update(password.getBytes());
+
+            /* Convert the hash value into bytes */
+            byte[] bytes = m.digest();
+
+            /* The bytes array has bytes in decimal form. Converting it into hexadecimal format. */
+            StringBuilder s = new StringBuilder();
+            for (byte aByte : bytes) {
+                s.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
+            }
+
+            /* Complete hashed password in hexadecimal format */
+            return s.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
     @Transactional
     @PostMapping(value = "/doctors/signup")
     public BaseResponse<String> signup(@RequestBody DoctorSignupRequest request) {
@@ -107,7 +136,7 @@ public class DoctorController {
                         .userId(doctor.getDoctorId())
                         .userName(doctor.getEmail())
                         .build())
-                .password(request.getPassword())
+                .password(encryptString(request.getPassword()))
                 .build();
 
         doctorSignupRepository.save(signupDetails);
