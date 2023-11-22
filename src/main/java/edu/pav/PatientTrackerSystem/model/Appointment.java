@@ -5,11 +5,13 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "appointments")
 @Data
 @NoArgsConstructor
+@SuperBuilder
 public class Appointment {
 
     @Id

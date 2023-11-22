@@ -25,6 +25,14 @@ CREATE TABLE cases (
     cost DECIMAL(7,2)
 );
 
+CREATE TABLE appointments (
+    appointment_id INT AUTO_INCREMENT PRIMARY KEY,
+    case_id INT,
+    patient_id INT,
+    doctor_id INT,
+    date VARCHAR(50),
+    time VARCHAR(50)
+);
 
 -- Insert 5 random rows into the DOCTORS table
 INSERT INTO doctors (doctor_id, name, dob, hospital, speciality, address, phone_number, email, is_approved)
@@ -41,3 +49,12 @@ VALUES
     (2, 2, 4, '2023-02-10', '2023-04-12', 'Cramps', 'Ibuprofen', '610.20'),
     (3, 3, 2, '2023-06-29', '2023-09-29', 'Headache','Paracetamol', '850.20'),
     (4, 3, 3, '2023-09-02', '', 'Acne', 'Isotretinoin, Trifarotene', '999.99');
+
+INSERT INTO appointments (appointment_id, case_id, patient_id, doctor_id, date, time)
+VALUES
+    (1, 1, 1, 2, '2023-01-10', '09:00'),
+    (2, 2, 2, 4, '2023-02-15', '10:30'),
+    (3, 1, 1, 2, '2023-02-20', '10:00'),
+    (4, 3, 3, 2, '2023-07-05', '15:00'),
+    (5, 4, 3, 3, '2023-09-05', '14:00'),
+    (6, 4, 3, 3, '2023-11-21', '16:00');

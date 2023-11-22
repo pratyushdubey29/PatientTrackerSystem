@@ -1,5 +1,6 @@
 package edu.pav.PatientTrackerSystem.controller;
 
+import edu.pav.PatientTrackerSystem.commons.Constants;
 import edu.pav.PatientTrackerSystem.commons.dto.BaseResponse;
 import edu.pav.PatientTrackerSystem.model.Doctor;
 import edu.pav.PatientTrackerSystem.repository.DoctorRepository;
@@ -20,22 +21,22 @@ public class DoctorController {
     @GetMapping(value = "/doctors")
     public BaseResponse<List<Doctor>> getAllApprovedDoctors() {
         List<Doctor> responseData = filterDoctorByStatus(doctorRepository.findAll(), true);
-        return new BaseResponse<>(HttpStatus.OK, "Success!", responseData);
+        return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, responseData);
     }
 
     @GetMapping(value = "/unapproved-doctors")
     public BaseResponse<List<Doctor>> getAllUnapprovedDoctors() {
         List<Doctor> responseData = filterDoctorByStatus(doctorRepository.findAll(), false);
-        return new BaseResponse<>(HttpStatus.OK, "Success!", responseData);
+        return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, responseData);
     }
 
     @GetMapping(value = "/doctors/{id}")
     public BaseResponse<Doctor> getDoctorById(@PathVariable("id") Long id) {
         Optional<Doctor> retrievedDoctor = doctorRepository.findById(id);
         if (retrievedDoctor.isPresent() && retrievedDoctor.get().getIsApproved()) {
-            return new BaseResponse<>(HttpStatus.OK, "Success!", retrievedDoctor.get());
+            return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, retrievedDoctor.get());
         } else {
-            return new BaseResponse<>(HttpStatus.NOT_FOUND, "Doctor ID not found!", Doctor.builder().build());
+            return new BaseResponse<>(HttpStatus.NOT_FOUND, Constants.DOCTOR_ID_NOT_FOUND_STRING, Doctor.builder().build());
         }
     }
 
@@ -43,11 +44,11 @@ public class DoctorController {
     public BaseResponse<List<Doctor>> findDoctorMatchByAll(@RequestParam(required = false) String speciality,
                                              @RequestParam(required = false) String name,
                                              @RequestParam(required = false) String address) {
-        speciality = (speciality != null) ? speciality : "";
-        name = (name != null) ? name : "";
-        address = (address != null) ? address : "";
+        speciality = (speciality != null) ? speciality : Constants.EMPTY_STRING;
+        name = (name != null) ? name : Constants.EMPTY_STRING;
+        address = (address != null) ? address : Constants.EMPTY_STRING;
 
-        return new BaseResponse<>(HttpStatus.OK, "Success!",  filterDoctorByStatus(
+        return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS,  filterDoctorByStatus(
                 doctorRepository.find(speciality, name, address), true));
     }
 
