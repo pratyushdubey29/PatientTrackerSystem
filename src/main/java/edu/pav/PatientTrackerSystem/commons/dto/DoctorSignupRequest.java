@@ -11,8 +11,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class DoctorSignupRequest {
 
-    @JsonProperty(value = "user_name")
-    private String userName;
+    private String email;
 
     private String password;
 
@@ -28,6 +27,4 @@ public class DoctorSignupRequest {
 
     @JsonProperty(value = "phone_number")
     private String phoneNumber;
-
-    private String email;
 }

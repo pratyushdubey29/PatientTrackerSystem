@@ -2,6 +2,7 @@ package edu.pav.PatientTrackerSystem.controller;
 
 import edu.pav.PatientTrackerSystem.commons.dto.BaseResponse;
 import edu.pav.PatientTrackerSystem.commons.dto.DoctorSignupRequest;
+import edu.pav.PatientTrackerSystem.commons.utils;
 import edu.pav.PatientTrackerSystem.model.Doctor;
 import edu.pav.PatientTrackerSystem.model.DoctorsLogin;
 import edu.pav.PatientTrackerSystem.model.UserLoginKey;
@@ -12,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -79,40 +78,13 @@ public class DoctorController {
         return doctorRepository.findByEmail(email) != null;
     }
 
-    private String encryptString(String password) {
-        try
-        {
-            /* MessageDigest instance for MD5. */
-            MessageDigest m = MessageDigest.getInstance("MD5");
-
-            /* Add plain-text password bytes to digest using MD5 update() method. */
-            m.update(password.getBytes());
-
-            /* Convert the hash value into bytes */
-            byte[] bytes = m.digest();
-
-            /* The bytes array has bytes in decimal form. Converting it into hexadecimal format. */
-            StringBuilder s = new StringBuilder();
-            for (byte aByte : bytes) {
-                s.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
-            }
-
-            /* Complete hashed password in hexadecimal format */
-            return s.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        return "";
-    }
-
     @Transactional
     @PostMapping(value = "/doctors/signup")
     public BaseResponse<String> signup(@RequestBody DoctorSignupRequest request) {
 
         if(existsDoctor(request.getEmail())) {
             return BaseResponse.<String>builder()
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.CONFLICT)
                     .msg("Doctor with this email already exists")
                     .body("Failed persisting")
                     .build();
@@ -136,7 +108,7 @@ public class DoctorController {
                         .userId(doctor.getDoctorId())
                         .userName(doctor.getEmail())
                         .build())
-                .password(encryptString(request.getPassword()))
+                .password(utils.encryptPassword(request.getPassword()))
                 .build();
 
         doctorSignupRepository.save(signupDetails);
