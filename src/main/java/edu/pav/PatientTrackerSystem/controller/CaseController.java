@@ -14,11 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+
+import static edu.pav.PatientTrackerSystem.commons.Utils.*;
 
 @RestController
 public class CaseController {
@@ -31,9 +31,6 @@ public class CaseController {
 
     @Autowired
     AppointmentRepository appointmentRepository;
-
-    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(Constants.YYYY_MM_DD_STRING);
-    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(Constants.HH_mm_STRING);
 
     @GetMapping(value = "/cases")
     public BaseResponse<List<Case>> getAllCases() {
@@ -66,65 +63,45 @@ public class CaseController {
         //Creates a new case and a new appointment together
 
         // TODO: Check if Users with those Ids exists or not; Discuss if required
-        // TODO: Move Time format and future/past checks (from everywhere) to some helper/util class.
 
-        String formattedCurrDate = LocalDate.now().format(dateFormatter);
-        String formattedCurrTime = LocalTime.now().format(timeFormatter);
         Long doctorId = request.getDoctorId();
         Long patientId = request.getPatientId();
-        String date = request.getDate();
-        String time = request.getTime();
+        String requestedTime = request.getTime();
+        String requestedDate = request.getDate();
 
-        // If requested date is not formatted well
-        if (!appointmentController.isValidDate(date) || !appointmentController.isValidTime(time)) {
+        DateTimeFormatStatus status = dateTimeFormatAndPastCheck(requestedDate, requestedTime);
+        if (status == DateTimeFormatStatus.ILL_FORMATTED){
             return new BaseResponse<>(HttpStatus.BAD_REQUEST,
                     Constants.INVALID_DATE_TIME_STRING, Appointment.builder().build());
-        }
-
-        // If requested date is in the past
-        if (appointmentController.isFutureDatetime(formattedCurrDate, formattedCurrTime, date, time)) {
+        } else if (status == DateTimeFormatStatus.PAST_DATETIME){
             return new BaseResponse<>(HttpStatus.OK,
                     Constants.PAST_DATE_TIME_STRING, Appointment.builder().build());
         }
 
         Case newCase = Case.builder()
-                .doctorId(doctorId)
-                .patientId(patientId)
-                .openDate(formattedCurrDate)
+                .doctorId(doctorId).patientId(patientId)
+                .openDate(getCurrentFormattedDate())
                 .build();
 
         Case returnedCase = caseRepository.save(newCase);
+        Appointment newAppointment = Appointment.builder()
+                .caseId(returnedCase.getCaseId()).patientId(request.getPatientId())
+                .doctorId(request.getDoctorId()).date(requestedDate).time(requestedTime)
+                .build();
 
-        AppointmentController.AvailabilityStatus status = appointmentController.
-                availabilityCheck(doctorId, patientId, date, time);
+        BaseResponse response = appointmentController.bookAppointment(newAppointment);
 
-        if (status == AppointmentController.AvailabilityStatus.DOCTOR_BOOKED) {
-
-            // If the doctor is booked at the requested time
+        if (!Objects.equals(response.getMsg(), Constants.SUCCESS)){
             TransactionInterceptor.currentTransactionStatus().setRollbackOnly();
-            return new BaseResponse<>(HttpStatus.OK,
-                    Constants.SLOT_ALREADY_BOOKED_STRING + Constants.DOCTOR, Appointment.builder().build());
-        } else if (status == AppointmentController.AvailabilityStatus.PATIENT_BOOKED) {
-
-            // If the patient is booked at the requested time
-            TransactionInterceptor.currentTransactionStatus().setRollbackOnly();
-            return new BaseResponse<>(HttpStatus.OK,
-                    Constants.SLOT_ALREADY_BOOKED_STRING + Constants.PATIENT, Appointment.builder().build());
-        } else {
-
-            // Book an appointment
-            Appointment newAppointment = Appointment.builder()
-                    .caseId(returnedCase.getCaseId())
-                    .patientId(patientId)
-                    .doctorId(doctorId)
-                    .date(date)
-                    .time(time)
-                    .build();
-            Appointment returnedAppointment = appointmentRepository.save(newAppointment);
-            return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, returnedAppointment);
         }
+        return response;
     }
 
+    @GetMapping(value = "/cases/open-cases")
+    public BaseResponse openCasesPatientDoctorPair(@RequestParam Long patientId, @RequestParam Long doctorId){
+        return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS,
+                caseRepository.findByDoctorIdAndPatientIdAndCloseDateIsNull(doctorId, patientId));
+    }
 
     //    @DeleteMapping(value = "/cases/{id}")
     private void deleteCase(@PathVariable("id") Long id) {

@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @AllArgsConstructor
 @SuperBuilder
-public class CreateAppointmentRequest {
+public class NewAppointmentRequest {
 
     @NonNull
     private Long caseId;
