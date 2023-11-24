@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class UserTypeAndIDRequest {
+    // TODO: Deprecate to RequestParams
 
     @NonNull
     private String userType;

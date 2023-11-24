@@ -33,11 +33,9 @@ public class DoctorController {
     @GetMapping(value = "/doctors/{id}")
     public BaseResponse<Doctor> getDoctorById(@PathVariable("id") Long id) {
         Optional<Doctor> retrievedDoctor = doctorRepository.findById(id);
-        if (retrievedDoctor.isPresent() && retrievedDoctor.get().getIsApproved()) {
-            return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, retrievedDoctor.get());
-        } else {
-            return new BaseResponse<>(HttpStatus.NOT_FOUND, Constants.DOCTOR_ID_NOT_FOUND_STRING, Doctor.builder().build());
-        }
+        return retrievedDoctor.map(doctor -> new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, doctor))
+                .orElseGet(() -> new BaseResponse<>(HttpStatus.NOT_FOUND,
+                        Constants.DOCTOR_ID_NOT_FOUND_STRING, Doctor.builder().build()));
     }
 
     @GetMapping(value = "/doctors/findMatchByAll")

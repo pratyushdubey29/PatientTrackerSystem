@@ -7,7 +7,7 @@ import java.time.format.DateTimeParseException;
 
 public class Utils {
 
-    static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(Constants.YYYY_MM_DD_STRING);
+    static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(Constants.yyyy_MM_dd_STRING);
     static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(Constants.HH_mm_STRING);
 
     public enum DateTimeFormatStatus {
