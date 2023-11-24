@@ -25,6 +25,7 @@ CREATE TABLE cases (
     cost DECIMAL(7,2)
 );
 
+
 CREATE TABLE appointments (
     appointment_id INT AUTO_INCREMENT PRIMARY KEY,
     case_id INT,
@@ -33,6 +34,14 @@ CREATE TABLE appointments (
     date VARCHAR(50),
     time VARCHAR(50)
 );
+
+CREATE TABLE doctors_login (
+    user_id INT,
+    user_name VARCHAR(50),
+    password VARCHAR(50),
+    PRIMARY KEY(user_id, user_name)
+);
+
 
 -- Insert 5 random rows into the DOCTORS table
 INSERT INTO doctors (doctor_id, name, dob, hospital, speciality, address, phone_number, email, is_approved)
