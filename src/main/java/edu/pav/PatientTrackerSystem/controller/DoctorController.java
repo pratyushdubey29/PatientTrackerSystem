@@ -3,7 +3,7 @@ package edu.pav.PatientTrackerSystem.controller;
 import edu.pav.PatientTrackerSystem.commons.Constants;
 import edu.pav.PatientTrackerSystem.commons.dto.BaseResponse;
 import edu.pav.PatientTrackerSystem.commons.dto.DoctorSignupRequest;
-import edu.pav.PatientTrackerSystem.commons.utils;
+import edu.pav.PatientTrackerSystem.commons.Utils;
 import edu.pav.PatientTrackerSystem.model.Doctor;
 import edu.pav.PatientTrackerSystem.model.DoctorsLogin;
 import edu.pav.PatientTrackerSystem.model.UserLoginKey;
@@ -107,7 +107,7 @@ public class DoctorController {
                         .userId(doctor.getDoctorId())
                         .userName(doctor.getEmail())
                         .build())
-                .password(utils.encryptPassword(request.getPassword()))
+                .password(Utils.encryptPassword(request.getPassword()))
                 .build();
 
         doctorSignupRepository.save(signupDetails);
