@@ -3,6 +3,7 @@ package edu.pav.PatientTrackerSystem.controller;
 import edu.pav.PatientTrackerSystem.commons.Constants;
 import edu.pav.PatientTrackerSystem.commons.dto.BaseResponse;
 import edu.pav.PatientTrackerSystem.commons.dto.NewCaseRequest;
+import edu.pav.PatientTrackerSystem.commons.dto.UpdateCaseRequest;
 import edu.pav.PatientTrackerSystem.commons.dto.UserTypeAndIDRequest;
 import edu.pav.PatientTrackerSystem.model.Appointment;
 import edu.pav.PatientTrackerSystem.model.Case;
@@ -57,6 +58,29 @@ public class CaseController {
         }
     }
 
+    @GetMapping(value = "/cases/open-cases")
+    public BaseResponse openCasesPatientDoctorPair(@RequestParam Long patientId, @RequestParam Long doctorId){
+        return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS,
+                caseRepository.findByDoctorIdAndPatientIdAndCloseDateIsNull(doctorId, patientId));
+    }
+
+    @GetMapping(value = "/cases/monthly")
+    public BaseResponse yearlyCases(@RequestParam Long doctorId, @RequestParam int year){
+        List<Case> yearlyCases = caseRepository.findByDoctorIdAndOpenDateContaining(doctorId, Integer.toString(year));
+
+        LinkedHashMap <String, Integer> casesByMonth = new LinkedHashMap<>();
+        for (Month month : Month.values()) {
+            casesByMonth.put(month.toString(), 0);
+        }
+
+        for (Case caseItem : yearlyCases) {
+            LocalDate openingDate = LocalDate.parse(caseItem.getOpenDate());
+            String monthKey = openingDate.getMonth().toString();
+            casesByMonth.put(monthKey, casesByMonth.getOrDefault(monthKey, 0) + 1);
+        }
+        return new BaseResponse(HttpStatus.OK, Constants.SUCCESS, casesByMonth);
+    }
+
     @PostMapping(value = "/cases/create")
     @Transactional
     public BaseResponse createNewCase(@RequestBody NewCaseRequest request) {
@@ -97,14 +121,21 @@ public class CaseController {
         return response;
     }
 
-    @GetMapping(value = "/cases/open-cases")
-    public BaseResponse openCasesPatientDoctorPair(@RequestParam Long patientId, @RequestParam Long doctorId){
-        return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS,
-                caseRepository.findByDoctorIdAndPatientIdAndCloseDateIsNull(doctorId, patientId));
+    @PostMapping(value = "cases/update")
+    public BaseResponse updateCase(@RequestBody UpdateCaseRequest request){
+        List<Case> retrievedCase = caseRepository.findByCaseIdAndCloseDateIsNull(request.getCaseId());
+        if(retrievedCase.isEmpty()){
+            return new BaseResponse(HttpStatus.NOT_FOUND, Constants.CASE_NOT_FOUND_OR_CLOSED_STRING, Case.builder().build());
+        }
+        retrievedCase.get(0).setSymptoms(request.getSymptoms());
+        retrievedCase.get(0).setMedicines(request.getMedicines());
+        retrievedCase.get(0).setCost(request.getCost());
+        Case updatedCase = caseRepository.save(retrievedCase.get(0));
+        return new BaseResponse(HttpStatus.OK, Constants.SUCCESS, updatedCase);
     }
 
     @PostMapping (value = "/cases/close")
-    public BaseResponse closeACase(@RequestParam Long caseId, @RequestParam Long doctorId){
+    public BaseResponse closeCase(@RequestParam Long caseId, @RequestParam Long doctorId){
         List<Case> returnedCases = caseRepository.findByDoctorIdAndCaseIdAndCloseDateIsNull(doctorId, caseId);
         if (returnedCases.isEmpty()){
             return new BaseResponse(HttpStatus.NOT_FOUND, Constants.CASE_NOT_FOUND_OR_CLOSED_STRING, Case.builder().build());
@@ -115,23 +146,6 @@ public class CaseController {
             Case updatedCase = caseRepository.save(returnedCases.get(0));
             return new BaseResponse(HttpStatus.OK, Constants.CASE_SUCCESSFULLY_CLOSED_STRING, updatedCase);
         }
-    }
-
-    @GetMapping(value = "/cases/monthly")
-    public BaseResponse yearlyCases(@RequestParam Long doctorId, @RequestParam int year){
-        List<Case> yearlyCases = caseRepository.findByDoctorIdAndOpenDateContaining(doctorId, Integer.toString(year));
-
-        LinkedHashMap <String, Integer> casesByMonth = new LinkedHashMap<>();
-        for (Month month : Month.values()) {
-            casesByMonth.put(month.toString(), 0);
-        }
-
-        for (Case caseItem : yearlyCases) {
-            LocalDate openingDate = LocalDate.parse(caseItem.getOpenDate());
-            String monthKey = openingDate.getMonth().toString();
-            casesByMonth.put(monthKey, casesByMonth.getOrDefault(monthKey, 0) + 1);
-        }
-        return new BaseResponse(HttpStatus.OK, Constants.SUCCESS, casesByMonth);
     }
 
     //    @DeleteMapping(value = "/cases/{id}")

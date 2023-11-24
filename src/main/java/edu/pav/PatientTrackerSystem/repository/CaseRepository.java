@@ -16,4 +16,6 @@ public interface CaseRepository extends JpaRepository<Case, Long> {
     List<Case> findByDoctorIdAndCaseIdAndCloseDateIsNull(Long doctorId, Long caseId);
 
     List<Case> findByDoctorIdAndOpenDateContaining(Long doctorId, String year);
+
+    List<Case> findByCaseIdAndCloseDateIsNull(Long caseId);
 }
