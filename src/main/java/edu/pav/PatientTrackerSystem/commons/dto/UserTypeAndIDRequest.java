@@ -1,25 +1,18 @@
 package edu.pav.PatientTrackerSystem.commons.dto;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 
-
 @Data
 @AllArgsConstructor
 @SuperBuilder
-public class CreateAppointmentRequest {
+public class UserTypeAndIDRequest {
+    // TODO: Deprecate to RequestParams
 
     @NonNull
-    private Long caseId;
+    private String userType;
     @NonNull
-    private Long patientId;
-    @NonNull
-    private Long doctorId;
-    @NonNull
-    private String date;
-    @NonNull
-    private String time;
+    private Long id;
 
 }

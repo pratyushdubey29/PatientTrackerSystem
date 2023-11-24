@@ -5,11 +5,13 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "cases")
 @Data
 @NoArgsConstructor
+@SuperBuilder
 public class Case {
 
     @Id

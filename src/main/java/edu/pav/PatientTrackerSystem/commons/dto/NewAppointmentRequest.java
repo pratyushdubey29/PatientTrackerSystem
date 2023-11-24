@@ -1,17 +1,25 @@
 package edu.pav.PatientTrackerSystem.commons.dto;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 
+
 @Data
 @AllArgsConstructor
 @SuperBuilder
-public class FetchAppointmentRequest {
+public class NewAppointmentRequest {
 
     @NonNull
-    private String userType;
+    private Long caseId;
     @NonNull
-    private Long id;
+    private Long patientId;
+    @NonNull
+    private Long doctorId;
+    @NonNull
+    private String date;
+    @NonNull
+    private String time;
 
 }
