@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @AllArgsConstructor
 @SuperBuilder
-public class DoctorSignupRequest {
+public class PatientSignupRequest {
     @NonNull
     private String email;
     @NonNull
@@ -19,9 +19,11 @@ public class DoctorSignupRequest {
     @NonNull
     private String name;
     @NonNull
-    private String hospital;
+    private char sex;
     @NonNull
-    private String speciality;
+    private int weight;
+    @NonNull
+    private int height;
     @NonNull
     private String address;
     @NonNull

@@ -1,9 +1,9 @@
 package edu.pav.PatientTrackerSystem.controller;
 
 import edu.pav.PatientTrackerSystem.commons.Constants;
+import edu.pav.PatientTrackerSystem.commons.Utils;
 import edu.pav.PatientTrackerSystem.commons.dto.BaseResponse;
 import edu.pav.PatientTrackerSystem.commons.dto.DoctorSignupRequest;
-import edu.pav.PatientTrackerSystem.commons.Utils;
 import edu.pav.PatientTrackerSystem.model.Doctor;
 import edu.pav.PatientTrackerSystem.model.DoctorsLogin;
 import edu.pav.PatientTrackerSystem.model.UserLoginKey;
@@ -79,14 +79,11 @@ public class DoctorController {
 
     @Transactional
     @PostMapping(value = "/doctors/signup")
-    public BaseResponse<String> signup(@RequestBody DoctorSignupRequest request) {
+    public BaseResponse signup(@RequestBody DoctorSignupRequest request) {
 
         if(existsDoctor(request.getEmail())) {
-            return BaseResponse.<String>builder()
-                    .status(HttpStatus.CONFLICT)
-                    .msg("Doctor with this email already exists")
-                    .body("Failed persisting")
-                    .build();
+            return new BaseResponse(HttpStatus.CONFLICT, Constants.DOCTOR_ALREADY_PRESENT_STRING,
+                    DoctorsLogin.builder().build());
         }
 
         Doctor doctor = Doctor.builder()
@@ -110,8 +107,8 @@ public class DoctorController {
                 .password(Utils.encryptPassword(request.getPassword()))
                 .build();
 
-        doctorSignupRepository.save(signupDetails);
+         DoctorsLogin doctorsLogin = doctorSignupRepository.save(signupDetails);
 
-        return new BaseResponse<>(HttpStatus.OK, "Success!", "persistence was successful!");
+        return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, Constants.SUCCESS);
     }
 }

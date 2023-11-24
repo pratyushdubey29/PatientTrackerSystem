@@ -8,6 +8,6 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @SuperBuilder
 @NoArgsConstructor
-@Table(name = "doctors_login")
-public class DoctorsLogin extends UserLogin{
+@Table(name = "patients_login")
+public class PatientsLogin extends UserLogin{
 }

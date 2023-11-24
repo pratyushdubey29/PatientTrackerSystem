@@ -1,7 +1,10 @@
 package edu.pav.PatientTrackerSystem.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Entity
@@ -35,14 +38,4 @@ public class Doctor {
     @Column(name = "is_approved")
     private Boolean isApproved;
 
-    public Doctor(String dob, String name, String hospital, String speciality, String address, String phoneNumber, String email, Boolean isApproved) {
-        this.dob = dob;
-        this.name = name;
-        this.hospital = hospital;
-        this.speciality = speciality;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.isApproved = isApproved;
-    }
 }

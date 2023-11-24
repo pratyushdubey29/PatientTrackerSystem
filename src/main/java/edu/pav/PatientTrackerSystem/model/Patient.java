@@ -5,44 +5,35 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "patients")
 @Data
 @NoArgsConstructor
+@SuperBuilder
 public class Patient {
 
     @Id
+    @Column(name = "patient_id")
     @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private int height;
+    private Long patientId;
 
-    private float weight;
-
-    private String DOB;
+    private String dob;
 
     private String name;
 
+    private int height;
+
+    private int weight;
+
     private char sex;
-
-    private String email;
-
-    private Long number;
 
     private String address;
 
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
-    public Patient(int height, float weight, String DOB, String name, char sex, String email, Long number, String address)
-    {
-        this.height = height;
-        this.weight = weight;
-        this.DOB = DOB;
-        this.name = name;
-        this.sex = sex;
-        this.email = email;
-        this.number = number;
-        this.address = address;
-
-    }
+    private String email;
 }

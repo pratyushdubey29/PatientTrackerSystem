@@ -1,7 +1,10 @@
 package edu.pav.PatientTrackerSystem.controller;
 
 import edu.pav.PatientTrackerSystem.commons.Constants;
-import edu.pav.PatientTrackerSystem.commons.dto.*;
+import edu.pav.PatientTrackerSystem.commons.dto.BaseResponse;
+import edu.pav.PatientTrackerSystem.commons.dto.NewAppointmentRequest;
+import edu.pav.PatientTrackerSystem.commons.dto.RescheduleAppointmentRequest;
+import edu.pav.PatientTrackerSystem.commons.dto.UserTypeAndIDRequest;
 import edu.pav.PatientTrackerSystem.model.Appointment;
 import edu.pav.PatientTrackerSystem.repository.AppointmentRepository;
 import edu.pav.PatientTrackerSystem.repository.CaseRepository;
