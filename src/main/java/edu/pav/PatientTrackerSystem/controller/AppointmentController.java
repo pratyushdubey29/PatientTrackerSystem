@@ -3,7 +3,7 @@ package edu.pav.PatientTrackerSystem.controller;
 import edu.pav.PatientTrackerSystem.commons.Constants;
 import edu.pav.PatientTrackerSystem.commons.dto.BaseResponse;
 import edu.pav.PatientTrackerSystem.commons.dto.CreateAppointmentRequest;
-import edu.pav.PatientTrackerSystem.commons.dto.FetchAppointmentRequest;
+import edu.pav.PatientTrackerSystem.commons.dto.UserTypeAndIDRequest;
 import edu.pav.PatientTrackerSystem.commons.dto.RescheduleAppointmentRequest;
 import edu.pav.PatientTrackerSystem.model.Appointment;
 import edu.pav.PatientTrackerSystem.repository.AppointmentRepository;
@@ -42,7 +42,7 @@ public class AppointmentController {
     }
 
     @PostMapping(value = "/appointments/view-today")
-    public BaseResponse getTodaysAppointments(@RequestBody FetchAppointmentRequest request) {
+    public BaseResponse getTodaysAppointments(@RequestBody UserTypeAndIDRequest request) {
 
         String formattedCurrDate = LocalDate.now().format(dateFormatter);
 
@@ -65,7 +65,7 @@ public class AppointmentController {
     }
 
     @PostMapping(value = "/appointments/view-future")
-    public BaseResponse getFutureAppointments(@RequestBody FetchAppointmentRequest request) {
+    public BaseResponse getFutureAppointments(@RequestBody UserTypeAndIDRequest request) {
 
         String formattedCurrDate = LocalDate.now().format(dateFormatter);
         String formattedCurrTime = LocalTime.now().format(timeFormatter);
@@ -79,9 +79,11 @@ public class AppointmentController {
 
         List<Appointment> retrievedAppointments;
         if (Objects.equals(request.getUserType().toLowerCase(), Constants.DOCTOR)) {
+            // TODO: Check if User with that Id exists or not; Discuss if required
             retrievedAppointments = filterPastOut(appointmentRepository.findByDoctorIdAndDateGreaterThanEqual(
                     request.getId(), formattedCurrDate), formattedCurrDate, formattedCurrTime);
         } else {
+            // TODO: Check if User with that Id exists or not; Discuss if required
             retrievedAppointments = filterPastOut(appointmentRepository.findByPatientIdAndDateGreaterThanEqual(
                     request.getId(), formattedCurrDate), formattedCurrDate, formattedCurrTime);
         }
@@ -160,7 +162,7 @@ public class AppointmentController {
     }
 
     @PostMapping(value = "/appointments/schedule")
-    public BaseResponse createAppointment(@RequestBody CreateAppointmentRequest request){
+    public BaseResponse scheduleAppointment(@RequestBody CreateAppointmentRequest request){
         String requestedTime = request.getTime();
         String requestedDate = request.getDate();
 
@@ -222,8 +224,9 @@ public class AppointmentController {
                 .collect(Collectors.toList());
     }
 
+    // TODO: Move everything below this to some Helper class.
 
-    private boolean isValidDate(String dateString) {
+    public boolean isValidDate(String dateString) {
         try {
             LocalDate.parse(dateString, dateFormatter);
             return true;
@@ -232,7 +235,7 @@ public class AppointmentController {
         }
     }
 
-    private boolean isValidTime(String timeString) {
+    public boolean isValidTime(String timeString) {
         try {
             LocalTime.parse(timeString, timeFormatter);
             return true;
@@ -241,19 +244,19 @@ public class AppointmentController {
         }
     }
 
-    private boolean isFutureDatetime(String dateA, String timeA, String dateB, String timeB) {
+    public boolean isFutureDatetime(String dateA, String timeA, String dateB, String timeB) {
         // Checks if Date-TimeA is in future of Date-TimeB
         return dateA.compareTo(dateB) > 0 || (dateA.equals(dateB) && timeA.compareTo(timeB) > 0);
     }
 
 
-    private enum AvailabilityStatus {
+    public enum AvailabilityStatus {
         DOCTOR_BOOKED,
         PATIENT_BOOKED,
         AVAILABLE
     }
 
-    private AvailabilityStatus availabilityCheck(Long doctorId, Long patientId, String date, String time) {
+    public AvailabilityStatus availabilityCheck(Long doctorId, Long patientId, String date, String time) {
         boolean doctorAvailable = appointmentRepository
                 .findByDoctorIdAndDateAndTime(doctorId, date, time).isEmpty();
         boolean patientAvailable = appointmentRepository
