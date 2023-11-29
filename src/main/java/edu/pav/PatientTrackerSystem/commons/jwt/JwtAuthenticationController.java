@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class JwtAuthenticationController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private AuthenticationManager   authenticationManager;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;

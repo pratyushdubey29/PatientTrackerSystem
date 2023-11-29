@@ -1,6 +1,6 @@
 package edu.pav.PatientTrackerSystem.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;

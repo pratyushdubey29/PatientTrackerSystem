@@ -9,7 +9,7 @@ import edu.pav.PatientTrackerSystem.model.PatientsLogin;
 import edu.pav.PatientTrackerSystem.model.UserLoginKey;
 import edu.pav.PatientTrackerSystem.repository.PatientRepository;
 import edu.pav.PatientTrackerSystem.repository.PatientSignupRepository;
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
