@@ -2,11 +2,13 @@ package edu.pav.PatientTrackerSystem.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.context.annotation.Primary;
 
 @Data
 @SuperBuilder
@@ -15,9 +17,12 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public abstract class UserLogin {
 
-    @EmbeddedId
-    private UserLoginKey loginKey;
+    @Id
+    private String userName;
 
     @Column
     private String password;
+
+    @Column
+    private Long userId;
 }

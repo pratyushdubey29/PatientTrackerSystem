@@ -6,6 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "patients")
@@ -36,4 +40,8 @@ public class Patient {
     private String phoneNumber;
 
     private String email;
+
+//    @ManyToMany
+//    @LazyCollection(LazyCollectionOption.FALSE)
+//    private Set<PatientRole> patientRoles;
 }

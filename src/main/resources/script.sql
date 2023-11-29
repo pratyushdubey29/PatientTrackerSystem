@@ -10,7 +10,7 @@ CREATE TABLE doctors (
     speciality VARCHAR(100),
     address VARCHAR(100),
     phone_number VARCHAR(13),
-    email VARCHAR(50),
+    email VARCHAR(50) UNIQUE,
     is_approved BOOL
 );
 
@@ -23,7 +23,7 @@ CREATE TABLE patients(
     weight INT,
     address VARCHAR(100),
     phone_number VARCHAR(13),
-    email VARCHAR(50)
+    email VARCHAR(50) UNIQUE
 );
 
 CREATE TABLE cases (
@@ -48,17 +48,15 @@ CREATE TABLE appointments (
 );
 
 CREATE TABLE doctors_login (
-    user_id INT,
-    user_name VARCHAR(50),
+    user_name VARCHAR(50) PRIMARY KEY,
     password VARCHAR(50),
-    PRIMARY KEY(user_id, user_name)
+    user_id UNIQUE
 );
 
 CREATE TABLE patients_login (
-    user_id INT,
-    user_name VARCHAR(50),
+    user_name VARCHAR(50) PRIMARY KEY,
     password VARCHAR(50),
-    PRIMARY KEY(user_id, user_name)
+    user_id UNIQUE
 );
 
 -- Insert 5 random rows into the DOCTORS table

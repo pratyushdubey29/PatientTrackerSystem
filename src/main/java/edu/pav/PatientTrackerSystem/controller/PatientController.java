@@ -2,16 +2,26 @@ package edu.pav.PatientTrackerSystem.controller;
 
 import edu.pav.PatientTrackerSystem.commons.Constants;
 import edu.pav.PatientTrackerSystem.commons.Utils;
+//import edu.pav.PatientTrackerSystem.commons.auth.patient.MyUserDetailsService;
 import edu.pav.PatientTrackerSystem.commons.dto.BaseResponse;
+import edu.pav.PatientTrackerSystem.commons.dto.LoginDto;
 import edu.pav.PatientTrackerSystem.commons.dto.PatientSignupRequest;
 import edu.pav.PatientTrackerSystem.model.Patient;
 import edu.pav.PatientTrackerSystem.model.PatientsLogin;
 import edu.pav.PatientTrackerSystem.model.UserLoginKey;
 import edu.pav.PatientTrackerSystem.repository.PatientRepository;
+//import edu.pav.PatientTrackerSystem.repository.PatientRoleRepository;
 import edu.pav.PatientTrackerSystem.repository.PatientSignupRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -21,6 +31,21 @@ public class PatientController {
 
     @Autowired
     PatientRepository patientRepository;
+//
+//    @Autowired
+//    private AuthenticationManager authenticationManager;
+//    @Autowired
+//    private PatientRepository patientRepository;
+//
+////    @Autowired
+////    private PatientRoleRepository roleRepository;
+//
+//    @Autowired
+//    private MyUserDetailsService userDetailsService;
+//
+//
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
     @Autowired
     PatientSignupRepository patientSignupRepository;
@@ -37,6 +62,14 @@ public class PatientController {
                 .orElseGet(() -> new BaseResponse<>(HttpStatus.NOT_FOUND,
                         Constants.PATIENT_ID_NOT_FOUND_STRING, Patient.builder().build()));
     }
+
+//    @PostMapping(value = "/patients/login")
+//    public BaseResponse login(@RequestBody LoginDto loginDto) {
+//        Authentication authentication = authenticationManager
+//                .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUserName(), loginDto.getPassword()));
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        return new BaseResponse(HttpStatus.OK, "User login successfully!...", null);
+//    }
 
     @Transactional
     @PostMapping(value = "/patients/signup")
@@ -57,8 +90,8 @@ public class PatientController {
         patient = patientRepository.save(patient);
 
         PatientsLogin signupDetails = PatientsLogin.builder()
-                .loginKey(UserLoginKey.builder().userId(patient.getPatientId()).userName(patient.getEmail())
-                        .build())
+                .userName(patient.getEmail())
+                .userId(patient.getPatientId())
                 .password(Utils.encryptPassword(request.getPassword()))
                 .build();
 

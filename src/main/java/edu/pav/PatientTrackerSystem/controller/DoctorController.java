@@ -100,14 +100,12 @@ public class DoctorController {
         doctor = doctorRepository.save(doctor);
 
         DoctorsLogin signupDetails = DoctorsLogin.builder()
-                .loginKey(UserLoginKey.builder()
-                        .userId(doctor.getDoctorId())
-                        .userName(doctor.getEmail())
-                        .build())
+                .userName(doctor.getEmail())
+                .userId(doctor.getDoctorId())
                 .password(Utils.encryptPassword(request.getPassword()))
                 .build();
 
-         DoctorsLogin doctorsLogin = doctorSignupRepository.save(signupDetails);
+         doctorSignupRepository.save(signupDetails);
 
         return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, Constants.SUCCESS);
     }
