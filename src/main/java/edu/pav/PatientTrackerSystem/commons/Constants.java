@@ -1,5 +1,9 @@
 package edu.pav.PatientTrackerSystem.commons;
 
+/**
+ * Constants class contains static final variables representing various strings and formats used in the application.
+ * These constants are used for consistent string values throughout the application.
+ */
 public final class Constants {
     public static final String EMPTY_STRING = "";
     public static final String PATIENT = "patient";

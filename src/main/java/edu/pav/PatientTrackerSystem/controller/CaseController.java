@@ -24,23 +24,46 @@ import java.util.Optional;
 
 import static edu.pav.PatientTrackerSystem.commons.Utils.*;
 
+/**
+ * Controller class for managing medical cases, including creation, retrieval, and updates.
+ */
 @RestController
 public class CaseController {
 
+    /**
+     * Repository for managing medical cases.
+     */
     @Autowired
     CaseRepository caseRepository;
 
+    /**
+     * Controller for managing medical appointments.
+     */
     @Autowired
     AppointmentController appointmentController;
 
+    /**
+     * Repository for managing medical appointments.
+     */
     @Autowired
     AppointmentRepository appointmentRepository;
 
+    /**
+     * Retrieves all medical cases.
+     *
+     * @return BaseResponse containing the list of all medical cases.
+     */
     @GetMapping(value = "/cases")
     public BaseResponse<List<Case>> getAllCases() {
         return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, caseRepository.findAll());
     }
 
+    /**
+     * Retrieves a specific medical case by its ID.
+     *
+     * @param id The ID of the medical case.
+     * @return BaseResponse containing the retrieved medical case or an error message.
+     */
     @GetMapping(value = "/cases/{id}")
     public BaseResponse getCaseById(@PathVariable("id") Long id) {
         Optional<Case> retrievedCase = caseRepository.findById(id);
@@ -49,6 +72,12 @@ public class CaseController {
                         Constants.CASE_ID_NOT_FOUND_STRING, Case.builder().build()));
     }
 
+    /**
+     * Retrieves cases associated with a user (either patient or doctor) based on user type and ID.
+     *
+     * @param request UserTypeAndIDRequest containing user type and ID.
+     * @return BaseResponse<List<Case>> containing the list of cases associated with the user.
+     */
     @GetMapping(value = "/cases/user-cases")
     public BaseResponse<List<Case>> getCaseByUser(@RequestBody UserTypeAndIDRequest request) {
         // TODO: Check if User with that Id exists or not; Discuss if required
@@ -61,12 +90,26 @@ public class CaseController {
         }
     }
 
+    /**
+     * Retrieves open cases for a patient-doctor pair.
+     *
+     * @param patientId Patient ID.
+     * @param doctorId Doctor ID.
+     * @return BaseResponse containing open cases for the specified patient-doctor pair.
+     */
     @GetMapping(value = "/cases/open-cases")
     public BaseResponse openCasesPatientDoctorPair(@RequestParam Long patientId, @RequestParam Long doctorId){
         return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS,
                 caseRepository.findByDoctorIdAndPatientIdAndCloseDateIsNull(doctorId, patientId));
     }
 
+    /**
+     * Retrieves monthly cases for a doctor in a given year.
+     *
+     * @param doctorId Doctor ID.
+     * @param year Year for which monthly cases are requested.
+     * @return BaseResponse containing monthly cases for the specified doctor and year.
+     */
     @GetMapping(value = "/cases/monthly")
     public BaseResponse yearlyCases(@RequestParam Long doctorId, @RequestParam int year){
         List<Case> yearlyCases = caseRepository.findByDoctorIdAndOpenDateContaining(doctorId, Integer.toString(year));
@@ -84,6 +127,12 @@ public class CaseController {
         return new BaseResponse(HttpStatus.OK, Constants.SUCCESS, casesByMonth);
     }
 
+    /**
+     * Creates a new medical case and appointment together.
+     *
+     * @param request NewCaseRequest containing information for creating a new case.
+     * @return BaseResponse indicating the success or failure of the operation.
+     */
     @PostMapping(value = "/cases/create")
     @Transactional
     public BaseResponse createNewCase(@RequestBody NewCaseRequest request) {
@@ -124,6 +173,12 @@ public class CaseController {
         return response;
     }
 
+    /**
+     * Updates an existing medical case.
+     *
+     * @param request UpdateCaseRequest containing information for updating a case.
+     * @return BaseResponse containing the updated medical case or an error message.
+     */
     @PostMapping(value = "cases/update")
     public BaseResponse updateCase(@RequestBody UpdateCaseRequest request){
         List<Case> retrievedCase = caseRepository.findByCaseIdAndCloseDateIsNull(request.getCaseId());
@@ -137,6 +192,13 @@ public class CaseController {
         return new BaseResponse(HttpStatus.OK, Constants.SUCCESS, updatedCase);
     }
 
+    /**
+     * Closes a medical case.
+     *
+     * @param caseId   The ID of the medical case to be closed.
+     * @param doctorId The ID of the doctor closing the case.
+     * @return BaseResponse indicating the success or failure of closing the case.
+     */
     @PostMapping (value = "/cases/close")
     public BaseResponse closeCase(@RequestParam Long caseId, @RequestParam Long doctorId){
         List<Case> returnedCases = caseRepository.findByDoctorIdAndCaseIdAndCloseDateIsNull(doctorId, caseId);

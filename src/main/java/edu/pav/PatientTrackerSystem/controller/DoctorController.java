@@ -18,28 +18,53 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Controller class for handling operations related to doctors, including retrieval, filtering,
+ * and signup functionalities.
+ */
 @RestController
 public class DoctorController {
 
+    /**
+     * Repository for accessing doctor data.
+     */
     @Autowired
     DoctorRepository doctorRepository;
 
+    /**
+     * Repository for accessing doctor signup details.
+     */
     @Autowired
     DoctorSignupRepository doctorSignupRepository;
 
-
+    /**
+     * Retrieves a list of all approved doctors.
+     *
+     * @return BaseResponse containing the list of approved doctors.
+     */
     @GetMapping(value = "/doctors")
     public BaseResponse<List<Doctor>> getAllApprovedDoctors() {
         List<Doctor> responseData = filterDoctorByStatus(doctorRepository.findAll(), true);
         return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, responseData);
     }
 
+    /**
+     * Retrieves a list of all unapproved doctors.
+     *
+     * @return BaseResponse containing the list of unapproved doctors.
+     */
     @GetMapping(value = "/unapproved-doctors")
     public BaseResponse<List<Doctor>> getAllUnapprovedDoctors() {
         List<Doctor> responseData = filterDoctorByStatus(doctorRepository.findAll(), false);
         return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, responseData);
     }
 
+    /**
+     * Retrieves a specific doctor by ID.
+     *
+     * @param id The ID of the doctor to retrieve.
+     * @return BaseResponse containing the retrieved doctor.
+     */
     @GetMapping(value = "/doctors/{id}")
     public BaseResponse<Doctor> getDoctorById(@PathVariable("id") Long id) {
         Optional<Doctor> retrievedDoctor = doctorRepository.findById(id);
@@ -48,6 +73,14 @@ public class DoctorController {
                         Constants.DOCTOR_ID_NOT_FOUND_STRING, Doctor.builder().build()));
     }
 
+    /**
+     * Searches for doctors based on speciality, name, and address.
+     *
+     * @param speciality The speciality to filter by.
+     * @param name       The name to filter by.
+     * @param address    The address to filter by.
+     * @return BaseResponse containing the list of matching doctors.
+     */
     @GetMapping(value = "/doctors/findMatchByAll")
     public BaseResponse<List<Doctor>> findDoctorMatchByAll(@RequestParam(required = false) String speciality,
                                              @RequestParam(required = false) String name,
@@ -60,6 +93,11 @@ public class DoctorController {
                 doctorRepository.find(speciality, name, address), true));
     }
 
+    /**
+     * Deletes a doctor by their unique identifier.
+     *
+     * @param id The unique identifier of the doctor to be deleted.
+     */
 //    @DeleteMapping(value = "/doctors/{id}")
     private void deleteDoctor(@PathVariable("id") Long id) {
         if (id != null) {
@@ -67,16 +105,35 @@ public class DoctorController {
         }
     }
 
+    /**
+     * Filters a list of doctors based on their approval status.
+     *
+     * @param inputDoctors   The list of doctors to be filtered.
+     * @param approvalStatus The approval status used for filtering.
+     * @return A filtered list of doctors.
+     */
     private List<Doctor> filterDoctorByStatus(List<Doctor> inputDoctors, boolean approvalStatus) {
         return inputDoctors.stream()
                 .filter(doctor -> doctor.getIsApproved() == approvalStatus)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Checks if a doctor with the given email exists in the system.
+     *
+     * @param email The email of the doctor to check for existence.
+     * @return {@code true} if a doctor with the given email exists, {@code false} otherwise.
+     */
     private Boolean existsDoctor(String email) {
         return doctorRepository.findByEmail(email) != null;
     }
 
+    /**
+     * Signs up a new doctor.
+     *
+     * @param request The DoctorSignupRequest containing signup details.
+     * @return BaseResponse indicating the success of the signup process.
+     */
     @Transactional
     @PostMapping(value = "/doctors/signup")
     public BaseResponse signup(@RequestBody DoctorSignupRequest request) {

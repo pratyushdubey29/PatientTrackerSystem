@@ -19,20 +19,40 @@ import java.util.stream.Collectors;
 
 import static edu.pav.PatientTrackerSystem.commons.Utils.*;
 
+/**
+ * Controller class for managing appointments in the Patient Tracker System.
+ */
 @RestController
 public class AppointmentController {
 
+    /**
+     * Repository for managing appointments.
+     */
     @Autowired
     AppointmentRepository appointmentRepository;
 
-    @Autowired
+    /**
+     * Repository for managing cases.
+     */
+    @Autowired  
     CaseRepository caseRepository;
 
+    /**
+     * Retrieves all appointments.
+     *
+     * @return BaseResponse containing a list of all appointments.
+     */
     @GetMapping("/appointments")
     public BaseResponse<List<Appointment>> getAllAppointments() {
         return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, appointmentRepository.findAll());
     }
 
+    /**
+     * Retrieves an appointment by its ID.
+     *
+     * @param id The ID of the appointment to retrieve.
+     * @return BaseResponse containing the appointment with the specified ID.
+     */
     @GetMapping(value = "/appointments/{id}")
     public BaseResponse<Appointment> getAppointmentById(@PathVariable("id") Long id) {
         Optional<Appointment> retrievedAppointment = appointmentRepository.findById(id);
@@ -41,6 +61,12 @@ public class AppointmentController {
                         Constants.APPOINTMENT_ID_NOT_FOUND_STRING, Appointment.builder().build()));
     }
 
+    /**
+     * Retrieves today's appointments for a given user.
+     *
+     * @param request UserTypeAndIDRequest containing user type and ID.
+     * @return BaseResponse containing today's appointments for the user.
+     */
     @PostMapping(value = "/appointments/view-today")
     public BaseResponse getTodaysAppointments(@RequestBody UserTypeAndIDRequest request) {
 
@@ -64,6 +90,12 @@ public class AppointmentController {
         return new BaseResponse<>(HttpStatus.OK, message, retrievedAppointments);
     }
 
+    /**
+     * Retrieves future appointments for a given user.
+     *
+     * @param request UserTypeAndIDRequest containing user type and ID.
+     * @return BaseResponse containing future appointments for the user.
+     */
     @PostMapping(value = "/appointments/view-future")
     public BaseResponse getFutureAppointments(@RequestBody UserTypeAndIDRequest request) {
 
@@ -93,6 +125,12 @@ public class AppointmentController {
         return new BaseResponse<>(HttpStatus.OK, message, retrievedAppointments);
     }
 
+    /**
+     * Creates a new appointment in an open case.
+     *
+     * @param request NewAppointmentRequest containing appointment details.
+     * @return BaseResponse indicating the success or failure of the operation.
+     */
     @PostMapping(value = "appointments/create-in-open-case")
     public BaseResponse newAppointmentInOpenCase(@RequestBody NewAppointmentRequest request){
         String requestedTime = request.getTime();
@@ -116,7 +154,12 @@ public class AppointmentController {
         return response;
     }
 
-
+    /**
+     * Reschedules an existing appointment.
+     *
+     * @param request RescheduleAppointmentRequest containing rescheduling details.
+     * @return BaseResponse indicating the success or failure of the rescheduling.
+     */
     @PostMapping(value = "appointments/reschedule")
     public BaseResponse rescheduleAppointments(@RequestBody RescheduleAppointmentRequest request) {
 
@@ -164,7 +207,14 @@ public class AppointmentController {
         }
     }
 
-
+    /**
+     * Removes appointments that are in the past based on the provided date and time.
+     *
+     * @param inputList       List of appointments to filter
+     * @param formattedDate   The formatted date for comparison
+     * @param formattedTime   The formatted time for comparison
+     * @return                List of filtered appointments
+     */
     private List<Appointment> filterPastOut(List<Appointment> inputList, String formattedDate, String formattedTime) {
         return inputList.stream()
                 .filter(appointment -> appointment.getDate().compareTo(formattedDate) > 0
@@ -172,6 +222,12 @@ public class AppointmentController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Books an appointment based on the provided Appointment object.
+     *
+     * @param appointment     The Appointment object to be booked
+     * @return                BaseResponse containing the result of the booking operation
+     */
     public BaseResponse bookAppointment(Appointment appointment){
         AvailabilityStatus availabilityStatus = availabilityCheck(appointment.getDoctorId(),
                 appointment.getPatientId(), appointment.getDate(), appointment.getTime());
@@ -193,6 +249,15 @@ public class AppointmentController {
         }
     }
 
+    /**
+     * Checks the availability of a doctor and a patient at a specific date and time.
+     *
+     * @param doctorId        The ID of the doctor
+     * @param patientId       The ID of the patient
+     * @param date            The date for which availability is checked
+     * @param time            The time for which availability is checked
+     * @return                AvailabilityStatus indicating the availability status
+     */
     public AvailabilityStatus availabilityCheck(Long doctorId, Long patientId, String date, String time) {
 
         boolean doctorAvailable = appointmentRepository
@@ -210,6 +275,9 @@ public class AppointmentController {
         return AvailabilityStatus.AVAILABLE;
     }
 
+    /**
+     * Enum representing the availability status of a time slot.
+     */
     public enum AvailabilityStatus {
         DOCTOR_BOOKED,
         PATIENT_BOOKED,

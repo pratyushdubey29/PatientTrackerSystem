@@ -16,20 +16,40 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+/**
+ * Controller class for managing patient-related operations.
+ */
 @RestController
 public class PatientController {
 
+    /**
+     * Repository for accessing patient data.
+     */
     @Autowired
     PatientRepository patientRepository;
 
+    /**
+     * Repository for accessing patient signup details.
+     */
     @Autowired
     PatientSignupRepository patientSignupRepository;
 
+    /**
+     * Retrieves all patients.
+     *
+     * @return BaseResponse containing the list of patients.
+     */
     @GetMapping("/patients")
     public BaseResponse getAllPatients(){
         return  new BaseResponse(HttpStatus.OK, Constants.SUCCESS, patientRepository.findAll());
     }
 
+    /**
+     * Retrieves a patient by their ID.
+     *
+     * @param id The ID of the patient.
+     * @return BaseResponse containing the patient information.
+     */
     @GetMapping("/patients/{id}")
     public BaseResponse getPatientById(@PathVariable("id") Long id){
         Optional<Patient> retrievedPatient = patientRepository.findById(id);
@@ -38,6 +58,12 @@ public class PatientController {
                         Constants.PATIENT_ID_NOT_FOUND_STRING, Patient.builder().build()));
     }
 
+    /**
+     * Registers a new patient.
+     *
+     * @param request The PatientSignupRequest containing patient information.
+     * @return BaseResponse indicating the success or failure of the registration.
+     */
     @Transactional
     @PostMapping(value = "/patients/signup")
     public BaseResponse signup(@RequestBody PatientSignupRequest request) {
@@ -67,6 +93,11 @@ public class PatientController {
         return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, Constants.SUCCESS);
     }
 
+    /**
+     * Deletes a patient with the specified ID.
+     *
+     * @param id The ID of the patient to be deleted.
+     */
     //    @DeleteMapping(value = "/patient/{id}")
     private void deletePatient(@PathVariable("id") Long id) {
         if (id != null) {
@@ -74,6 +105,12 @@ public class PatientController {
         }
     }
 
+    /**
+     * Checks if a patient with the specified email exists.
+     *
+     * @param email The email to check for the existence of a patient.
+     * @return {@code true} if a patient with the given email exists, {@code false} otherwise.
+     */
     private Boolean existsPatient(String email) {
         return patientRepository.findByEmail(email) != null;
     }

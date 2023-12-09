@@ -5,6 +5,10 @@ import javax.persistence.Table;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Represents the entity class for storing login information specific to doctors.
+ * Extends the UserLogin class, inheriting common login attributes.
+ */
 @Entity
 @SuperBuilder
 @NoArgsConstructor
