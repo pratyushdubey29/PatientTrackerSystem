@@ -40,7 +40,7 @@ public class AdminController {
      *         If the doctor with the given ID is not found, an error message is provided.
      */
     @PostMapping(value = "/admin/approve-doctor/{id}")
-    private BaseResponse approveDoctor(@PathVariable("id") Long id){
+    public BaseResponse approveDoctor(@PathVariable("id") Long id){
         // Check if the doctor with the given ID exists
         BaseResponse searchResponse = doctorController.getDoctorById(id);
         if (Objects.equals(searchResponse.getMsg(), Constants.DOCTOR_ID_NOT_FOUND_STRING)){
