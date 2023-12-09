@@ -14,6 +14,7 @@ Before running the Patient Tracker System, ensure that your system meets the fol
 - MySQL relational database
 
 ### Recommended (Our) Versions
+TODO: Update Java version
 1. Java:  `21.0.1`
 2. SpringBoot:  `3.1.5`
 3. Maven:  `3.9.5`
