@@ -1,9 +1,10 @@
 package edu.pav.PatientTrackerSystem.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * Represents the entity class for storing login information specific to doctors.

@@ -11,7 +11,6 @@ import edu.pav.PatientTrackerSystem.model.UserLoginKey;
 import edu.pav.PatientTrackerSystem.repository.DoctorRepository;
 import edu.pav.PatientTrackerSystem.repository.DoctorSignupRepository;
 
-import javax.print.Doc;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

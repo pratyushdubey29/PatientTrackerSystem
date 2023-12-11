@@ -1,12 +1,13 @@
 package edu.pav.PatientTrackerSystem.model;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.MappedSuperclass;
 
 /**
  * This abstract class represents the login information for a user.

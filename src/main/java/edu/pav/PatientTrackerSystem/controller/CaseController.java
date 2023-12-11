@@ -10,12 +10,12 @@ import edu.pav.PatientTrackerSystem.model.Appointment;
 import edu.pav.PatientTrackerSystem.model.Case;
 import edu.pav.PatientTrackerSystem.repository.AppointmentRepository;
 import edu.pav.PatientTrackerSystem.repository.CaseRepository;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;

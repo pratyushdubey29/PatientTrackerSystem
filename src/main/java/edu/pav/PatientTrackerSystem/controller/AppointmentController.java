@@ -9,7 +9,6 @@ import edu.pav.PatientTrackerSystem.commons.dto.UserTypeAndIDRequest;
 import edu.pav.PatientTrackerSystem.model.Appointment;
 import edu.pav.PatientTrackerSystem.repository.AppointmentRepository;
 import edu.pav.PatientTrackerSystem.repository.CaseRepository;
-import org.hibernate.cache.spi.entry.StandardCacheEntryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
