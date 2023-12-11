@@ -3,7 +3,10 @@ package edu.pav.PatientTrackerSystem.controller;
 import edu.pav.PatientTrackerSystem.commons.Constants;
 import edu.pav.PatientTrackerSystem.commons.Utils;
 import edu.pav.PatientTrackerSystem.commons.dto.BaseResponse;
+import edu.pav.PatientTrackerSystem.commons.dto.DoctorProfileEditRequest;
+import edu.pav.PatientTrackerSystem.commons.dto.PatientProfileEditRequest;
 import edu.pav.PatientTrackerSystem.commons.dto.PatientSignupRequest;
+import edu.pav.PatientTrackerSystem.model.Doctor;
 import edu.pav.PatientTrackerSystem.model.Patient;
 import edu.pav.PatientTrackerSystem.model.PatientsLogin;
 import edu.pav.PatientTrackerSystem.model.UserLoginKey;
@@ -115,4 +118,28 @@ public class PatientController {
         return patientRepository.findByEmail(email) != null;
     }
 
+    /**
+     * Edits the details of a patient.
+     *
+     * @param request The PatientProfileEditRequest containing edit details.
+     * @return BaseResponse indicating the success of the edit process.
+     */
+    @PostMapping(value = "/patients/edit")
+    public BaseResponse editProfile(@RequestBody PatientProfileEditRequest request) {
+        Optional<Patient> optionalPatient = patientRepository.findById(request.getPatientId());
+
+        if (optionalPatient.isPresent()) {
+            Patient existingPatient = optionalPatient.get();
+
+            existingPatient.setAddress(request.getAddress());
+            existingPatient.setHeight(request.getHeight());
+            existingPatient.setWeight(request.getWeight());
+            existingPatient.setPhoneNumber(request.getPhoneNumber());
+
+            Patient updatePatient = patientRepository.save(existingPatient);
+            return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, updatePatient);
+        } else {
+            return new BaseResponse<>(HttpStatus.NOT_FOUND, Constants.PATIENT_ID_NOT_FOUND_STRING, Patient.builder().build());
+        }
+    }
 }
