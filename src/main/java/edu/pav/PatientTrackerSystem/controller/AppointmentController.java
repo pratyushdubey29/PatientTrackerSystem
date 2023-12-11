@@ -1,6 +1,7 @@
 package edu.pav.PatientTrackerSystem.controller;
 
 import edu.pav.PatientTrackerSystem.commons.Constants;
+import edu.pav.PatientTrackerSystem.commons.EmailService;
 import edu.pav.PatientTrackerSystem.commons.dto.BaseResponse;
 import edu.pav.PatientTrackerSystem.commons.dto.NewAppointmentRequest;
 import edu.pav.PatientTrackerSystem.commons.dto.RescheduleAppointmentRequest;
@@ -8,13 +9,12 @@ import edu.pav.PatientTrackerSystem.commons.dto.UserTypeAndIDRequest;
 import edu.pav.PatientTrackerSystem.model.Appointment;
 import edu.pav.PatientTrackerSystem.repository.AppointmentRepository;
 import edu.pav.PatientTrackerSystem.repository.CaseRepository;
+import org.hibernate.cache.spi.entry.StandardCacheEntryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static edu.pav.PatientTrackerSystem.commons.Utils.*;
@@ -36,6 +36,9 @@ public class AppointmentController {
      */
     @Autowired  
     CaseRepository caseRepository;
+
+    @Autowired
+    EmailService emailService;
 
     /**
      * Retrieves all appointments.
@@ -150,8 +153,8 @@ public class AppointmentController {
                 .doctorId(request.getDoctorId()).date(requestedDate).time(requestedTime)
                 .build();
 
-        BaseResponse response = bookAppointment(newAppointment);
-        return response;
+        return bookAppointment(newAppointment, Constants.NEW_APPOINTMENT_SCHEDULED_EMAIL_SUBJECT_STRING,
+                Constants.NEW_APPOINTMENT_SCHEDULED_EMAIL_BODY_STRING);
     }
 
     /**
@@ -197,7 +200,8 @@ public class AppointmentController {
                 .patientId(currentAppointment.getPatientId()).doctorId(currentAppointment.getDoctorId())
                 .date(newDate).time(newTime)
                 .build();
-        return bookAppointment(updatedAppointment);
+        return bookAppointment(updatedAppointment, Constants.APPOINTMENT_RESCHEDULED_EMAIL_SUBJECT_STRING,
+                Constants.APPOINTMENT_RESCHEDULED_EMAIL_BODY_STRING);
     }
 
 //    @DeleteMapping(value = "/appointments/{id}")
@@ -228,7 +232,7 @@ public class AppointmentController {
      * @param appointment     The Appointment object to be booked
      * @return                BaseResponse containing the result of the booking operation
      */
-    public BaseResponse bookAppointment(Appointment appointment){
+    public BaseResponse bookAppointment(Appointment appointment, String subject, String body){
         AvailabilityStatus availabilityStatus = availabilityCheck(appointment.getDoctorId(),
                 appointment.getPatientId(), appointment.getDate(), appointment.getTime());
 
@@ -245,6 +249,15 @@ public class AppointmentController {
         } else {
             // Book the appointment
             appointmentRepository.save(appointment);
+
+            HashMap<String, ArrayList<Long>> userList = new HashMap<>();
+            userList.put(Constants.DOCTOR, new ArrayList<>(Collections.singletonList(appointment.getDoctorId())));
+            userList.put(Constants.PATIENT, new ArrayList<>(Collections.singletonList(appointment.getPatientId())));
+            String emailBody = body + Constants.CASE_ID + appointment.getCaseId()
+                    + Constants.DATE + appointment.getDate()
+                    + Constants.TIME + appointment.getTime();
+            emailService.alertUsers(userList, subject, emailBody);
+
             return new BaseResponse<>(HttpStatus.OK, Constants.SCHEDULE_APPOINTMENT_SUCCESSFUL, appointment);
         }
     }
