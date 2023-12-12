@@ -21,7 +21,7 @@ import javax.persistence.MappedSuperclass;
 public abstract class UserLogin {
 
     /**
-     * The composite key consisting of user ID and user type.
+     * The composite key consisting of user_id and user_name.
      */
     @EmbeddedId
     private UserLoginKey loginKey;

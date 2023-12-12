@@ -38,4 +38,7 @@ public final class Constants {
     public static final String APPOINTMENT_RESCHEDULED_EMAIL_BODY_STRING = "An appointment has been rescheduled, check dashboard for more details!";
     public static final String CASE_UPDATES_EMAIL_SUBJECT_STRING = "Case updated by doctor";
     public static final String CASE_UPDATED_EMAIL_BODY_STRING = "There has been an update by the doctor in ";
+    public static final String INVALID_OTP_STRING = "Invalid OTP!";
+    public static final String PASSWORD_RESET = "Password successfully reset!";
+    public static final String OTP_EMAIL_SUBJECT_STRING = "OTP for Password Reset";
 }
