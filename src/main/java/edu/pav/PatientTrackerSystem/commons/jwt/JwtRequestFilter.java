@@ -1,14 +1,17 @@
 package edu.pav.PatientTrackerSystem.commons.jwt;
 
+import edu.pav.PatientTrackerSystem.commons.Constants;
 import io.jsonwebtoken.ExpiredJwtException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -24,11 +27,23 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+//    @Autowired
+//    public JwtRequestFilter(@Qualifier("jwtDoctorUserDetailsServiceBean") JwtDoctorUserDetailsService jwtDoctorUserDetailsServiceBean,
+//                             @Qualifier("jwtPatientUserDetailsServiceBean") JwtPatientUserDetailsService jwtPatientDetailsServiceBean,
+//                            JwtTokenUtil jwtTokenUtil) {
+//        this.jwtPatientUserDetailsService = jwtPatientDetailsServiceBean;
+//        this.jwtDoctorUserDetailsService = jwtDoctorUserDetailsServiceBean;
+//        this.jwtTokenUtil = jwtTokenUtil;
+//    }
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
         final String requestTokenHeader = request.getHeader("Authorization");
+
+        final String requestUserType = request.getHeader("UserType");
 
         String username = null;
         String jwtToken = null;
@@ -50,7 +65,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // Once we get the token validate it.
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(username);
+
+//            if (Constants.UserType.DOCTOR.toString().equals(requestUserType)) {
+//                userDetails = jwtDoctorUserDetailsService.loadUserByUsername(username);
+//            } else {
+//                userDetails = jwtPatientUserDetailsService.loadUserByUsername(username);
+//            }
 
             // if token is valid configure Spring Security to manually set
             // authentication
@@ -68,5 +89,4 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
         chain.doFilter(request, response);
     }
-
 }

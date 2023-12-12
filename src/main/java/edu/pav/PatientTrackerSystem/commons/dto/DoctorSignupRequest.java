@@ -20,7 +20,7 @@ public class DoctorSignupRequest {
      * The email address of the doctor.
      */
     @NonNull
-    private String email;
+    private String appendedEmail;
     
     /**
      * The password associated with the doctor's account.

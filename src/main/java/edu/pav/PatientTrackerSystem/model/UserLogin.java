@@ -1,11 +1,9 @@
 package edu.pav.PatientTrackerSystem.model;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.MappedSuperclass;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -17,13 +15,20 @@ import lombok.experimental.SuperBuilder;
 @MappedSuperclass
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class UserLogin {
 
+    @Id
+    @Column
+    @Setter(AccessLevel.NONE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     /**
-     * The composite key consisting of user ID and user type.
+     * The username associated with the user login.
      */
-    @EmbeddedId
-    private UserLoginKey loginKey;
+    @Column
+    private String username;
 
     /**
      * The password associated with the user login.

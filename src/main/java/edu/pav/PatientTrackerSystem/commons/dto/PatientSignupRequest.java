@@ -19,7 +19,7 @@ public class PatientSignupRequest {
      * The email address of the patient.
      */
     @NonNull
-    private String email;
+    private String appendedEmail;
 
     /**
      * The password chosen by the patient for authentication.

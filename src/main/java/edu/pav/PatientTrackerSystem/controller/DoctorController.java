@@ -1,19 +1,28 @@
 package edu.pav.PatientTrackerSystem.controller;
 
 import edu.pav.PatientTrackerSystem.commons.Constants;
-import edu.pav.PatientTrackerSystem.commons.Utils;
 import edu.pav.PatientTrackerSystem.commons.dto.BaseResponse;
 import edu.pav.PatientTrackerSystem.commons.dto.DoctorSignupRequest;
+import edu.pav.PatientTrackerSystem.commons.dto.LoginRequest;
+import edu.pav.PatientTrackerSystem.commons.dto.LoginResponse;
+import edu.pav.PatientTrackerSystem.commons.jwt.JwtTokenUtil;
+import edu.pav.PatientTrackerSystem.commons.jwt.JwtUserDetailsService;
 import edu.pav.PatientTrackerSystem.model.Doctor;
 import edu.pav.PatientTrackerSystem.model.DoctorsLogin;
-import edu.pav.PatientTrackerSystem.model.UserLoginKey;
+import edu.pav.PatientTrackerSystem.model.UserLogin;
 import edu.pav.PatientTrackerSystem.repository.DoctorRepository;
 import edu.pav.PatientTrackerSystem.repository.DoctorSignupRepository;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,6 +34,9 @@ import java.util.stream.Collectors;
 @RestController
 public class DoctorController {
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     /**
      * Repository for accessing doctor data.
      */
@@ -35,7 +47,18 @@ public class DoctorController {
      * Repository for accessing doctor signup details.
      */
     @Autowired
-    DoctorSignupRepository doctorSignupRepository;
+    DoctorSignupRepository signupRepository;
+
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private JwtUserDetailsService userDetailsService;
+
 
     /**
      * Retrieves a list of all approved doctors.
@@ -121,11 +144,11 @@ public class DoctorController {
     /**
      * Checks if a doctor with the given email exists in the system.
      *
-     * @param email The email of the doctor to check for existence.
+     * @param username The email of the doctor to check for existence.
      * @return {@code true} if a doctor with the given email exists, {@code false} otherwise.
      */
-    private Boolean existsDoctor(String email) {
-        return doctorRepository.findByEmail(email) != null;
+    private Boolean existsDoctor(String username) {
+        return signupRepository.findByUsername(username) != null;
     }
 
     /**
@@ -136,16 +159,28 @@ public class DoctorController {
      */
     @Transactional
     @PostMapping(value = "/doctors/signup")
-    public BaseResponse signup(@RequestBody DoctorSignupRequest request) {
+    public BaseResponse<UserLogin> signup(@RequestBody DoctorSignupRequest request) {
 
-        if(existsDoctor(request.getEmail())) {
-            return new BaseResponse(HttpStatus.CONFLICT, Constants.DOCTOR_ALREADY_PRESENT_STRING,
+        String appendedEmail = request.getAppendedEmail();
+        assert appendedEmail.startsWith(Constants.DOCTOR + ":");
+        String userName = request.getAppendedEmail().substring(7);
+
+        DoctorsLogin signupDetails = DoctorsLogin.builder()
+                .username(userName)
+                .password(passwordEncoder.encode(request.getPassword()))
+                .build();
+
+        if(existsDoctor(userName)) {
+            return new BaseResponse<>(HttpStatus.CONFLICT, Constants.DOCTOR_ALREADY_PRESENT_STRING,
                     DoctorsLogin.builder().build());
         }
 
+        signupDetails = signupRepository.save(signupDetails);
+
         Doctor doctor = Doctor.builder()
+                .doctorId(signupDetails.getId())
                 .name(request.getName())
-                .email(request.getEmail())
+                .email(userName)
                 .address(request.getAddress())
                 .hospital(request.getHospital())
                 .dob(request.getDob())
@@ -154,18 +189,38 @@ public class DoctorController {
                 .isApproved(Boolean.FALSE)
                 .build();
 
-        doctor = doctorRepository.save(doctor);
+        doctorRepository.save(doctor);
 
-        DoctorsLogin signupDetails = DoctorsLogin.builder()
-                .loginKey(UserLoginKey.builder()
-                        .userId(doctor.getDoctorId())
-                        .userName(doctor.getEmail())
-                        .build())
-                .password(Utils.encryptPassword(request.getPassword()))
-                .build();
-
-         DoctorsLogin doctorsLogin = doctorSignupRepository.save(signupDetails);
-
-        return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, Constants.SUCCESS);
+        return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, DoctorsLogin.builder().id(signupDetails.getId()).build());
     }
+
+    @PostMapping(value = "/doctors/login")
+    public BaseResponse<LoginResponse> login(@RequestBody LoginRequest request) throws Exception {
+
+        String appendedEmail = request.getAppendedUsername();
+        assert appendedEmail.startsWith(Constants.DOCTOR + ":");
+        String userName = request.getAppendedUsername().substring(7);
+
+        authenticate(appendedEmail, request.getPassword());
+        final UserDetails userDetails = userDetailsService
+                .loadUserByUsername(appendedEmail);
+
+        final String token = jwtTokenUtil.generateToken(userDetails);
+
+
+        Doctor doctor = doctorRepository.findByEmail(userName);
+        return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, LoginResponse.builder().userId(doctor.getDoctorId()).token(token).build());
+    }
+
+
+    private void authenticate(String username, String password) throws Exception {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (DisabledException e) {
+            throw new Exception("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            throw new Exception("INVALID_CREDENTIALS", e);
+        }
+    }
+
 }

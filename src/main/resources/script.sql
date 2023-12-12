@@ -1,9 +1,10 @@
 CREATE DATABASE IF NOT EXISTS PATIENT_TRACKER_DB;
 USE PATIENT_TRACKER_DB;
 
+DROP TABLE doctors;
 -- Create the Doctor table
 CREATE TABLE doctors (
-    doctor_id INT AUTO_INCREMENT PRIMARY KEY,
+    doctor_id INT,
     name VARCHAR(50),
     dob VARCHAR(50),
     hospital VARCHAR(50),
@@ -14,8 +15,9 @@ CREATE TABLE doctors (
     is_approved BOOL
 );
 
+DROP TABLE patients;
 CREATE TABLE patients(
-    patient_id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT,
     name VARCHAR(50),
     dob VARCHAR(50),
     sex CHAR,
@@ -26,6 +28,7 @@ CREATE TABLE patients(
     email VARCHAR(50)
 );
 
+DROP TABLE cases;
 CREATE TABLE cases (
     case_id INT AUTO_INCREMENT PRIMARY KEY,
     patient_id INT,
@@ -37,7 +40,7 @@ CREATE TABLE cases (
     cost DECIMAL(7,2)
 );
 
-
+DROP TABLE appointments;
 CREATE TABLE appointments (
     appointment_id INT AUTO_INCREMENT PRIMARY KEY,
     case_id INT,
@@ -47,18 +50,18 @@ CREATE TABLE appointments (
     time VARCHAR(50)
 );
 
+DROP TABLE doctors_login;
 CREATE TABLE doctors_login (
-    user_id INT,
-    user_name VARCHAR(50),
-    password VARCHAR(50),
-    PRIMARY KEY(user_id, user_name)
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50),
+    password VARCHAR(250)
 );
 
+DROP TABLE patients_login;
 CREATE TABLE patients_login (
-    user_id INT,
-    user_name VARCHAR(50),
-    password VARCHAR(50),
-    PRIMARY KEY(user_id, user_name)
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50),
+    password VARCHAR(250)
 );
 
 -- Insert 5 random rows into the DOCTORS table
@@ -94,3 +97,11 @@ VALUES
 ('Satoshi Tanaka', '1995-03-10', 'M', 180, 80, '71 Ok St, Villageton', '885-945-6789', 'satoshi.tanaka@example.com'),
 ('Emily Brown', '1992-12-05', 'F', 168, 60, '1221 Pin St, Hamletville', '585-456-7890', 'emily.brown@example.com'),
 ('Luca Romano', '1988-06-30', 'M', 170, 65, '986 Goal St, Countryside', '515-567-8901', 'luca.romano@example.com');
+
+
+
+CREATE TABLE user (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100),
+    password VARCHAR(200)
+);

@@ -3,15 +3,26 @@ package edu.pav.PatientTrackerSystem.controller;
 import edu.pav.PatientTrackerSystem.commons.Constants;
 import edu.pav.PatientTrackerSystem.commons.Utils;
 import edu.pav.PatientTrackerSystem.commons.dto.BaseResponse;
+import edu.pav.PatientTrackerSystem.commons.dto.LoginRequest;
+import edu.pav.PatientTrackerSystem.commons.dto.LoginResponse;
 import edu.pav.PatientTrackerSystem.commons.dto.PatientSignupRequest;
+import edu.pav.PatientTrackerSystem.commons.jwt.JwtTokenUtil;
+import edu.pav.PatientTrackerSystem.commons.jwt.JwtUserDetailsService;
+import edu.pav.PatientTrackerSystem.model.Doctor;
+import edu.pav.PatientTrackerSystem.model.DoctorsLogin;
 import edu.pav.PatientTrackerSystem.model.Patient;
 import edu.pav.PatientTrackerSystem.model.PatientsLogin;
-import edu.pav.PatientTrackerSystem.model.UserLoginKey;
 import edu.pav.PatientTrackerSystem.repository.PatientRepository;
 import edu.pav.PatientTrackerSystem.repository.PatientSignupRepository;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -21,6 +32,9 @@ import java.util.Optional;
  */
 @RestController
 public class PatientController {
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     /**
      * Repository for accessing patient data.
@@ -33,6 +47,15 @@ public class PatientController {
      */
     @Autowired
     PatientSignupRepository patientSignupRepository;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private JwtUserDetailsService userDetailsService;
 
     /**
      * Retrieves all patients.
@@ -66,31 +89,68 @@ public class PatientController {
      */
     @Transactional
     @PostMapping(value = "/patients/signup")
-    public BaseResponse signup(@RequestBody PatientSignupRequest request) {
+    public BaseResponse<PatientsLogin> signup(@RequestBody PatientSignupRequest request) {
 
-        if (existsPatient(request.getEmail())) {
-            return new BaseResponse(HttpStatus.CONFLICT, Constants.PATIENT_ALREADY_PRESENT_STRING,
+        String appendedEmail = request.getAppendedEmail();
+        assert appendedEmail.startsWith(Constants.PATIENT + ":");
+        String userName = request.getAppendedEmail().substring(8);
+
+        PatientsLogin signupDetails = PatientsLogin.builder()
+                .username(userName)
+                .password(passwordEncoder.encode(request.getPassword()))
+                .build();
+
+        if(existsPatient(userName)) {
+            return new BaseResponse<>(HttpStatus.CONFLICT, Constants.DOCTOR_ALREADY_PRESENT_STRING,
                     PatientsLogin.builder().build());
         }
 
+        signupDetails = patientSignupRepository.save(signupDetails);
+
         Patient patient = Patient.builder()
-                .name(request.getName()).email(request.getEmail())
-                .address(request.getAddress()).dob(request.getDob())
-                .sex(request.getSex()).height(request.getHeight())
-                .weight(request.getWeight()).phoneNumber(request.getPhoneNumber())
+                .patientId(signupDetails.getId())
+                .email(userName)
+                .name(request.getName())
+                .address(request.getAddress())
+                .dob(request.getDob())
+                .sex(request.getSex())
+                .height(request.getHeight())
+                .weight(request.getWeight())
+                .phoneNumber(request.getPhoneNumber())
                 .build();
 
-        patient = patientRepository.save(patient);
+        patientRepository.save(patient);
 
-        PatientsLogin signupDetails = PatientsLogin.builder()
-                .loginKey(UserLoginKey.builder().userId(patient.getPatientId()).userName(patient.getEmail())
-                        .build())
-                .password(Utils.encryptPassword(request.getPassword()))
-                .build();
+        return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, PatientsLogin.builder().id(signupDetails.getId()).build());
+    }
 
-        patientSignupRepository.save(signupDetails);
+    @PostMapping(value = "/patients/login")
+    public BaseResponse<LoginResponse> login(@RequestBody LoginRequest request) throws Exception {
 
-        return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, Constants.SUCCESS);
+        String appendedEmail = request.getAppendedUsername();
+        assert appendedEmail.startsWith(Constants.PATIENT + ":");
+        String userName = request.getAppendedUsername().substring(8);
+
+        authenticate(appendedEmail, request.getPassword());
+        final UserDetails userDetails = userDetailsService
+                .loadUserByUsername(appendedEmail);
+
+        final String token = jwtTokenUtil.generateToken(userDetails);
+
+
+        Patient patient= patientRepository.findByEmail(userName);
+        return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, LoginResponse.builder().userId(patient.getPatientId()).token(token).build());
+    }
+
+
+    private void authenticate(String username, String password) throws Exception {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (DisabledException e) {
+            throw new Exception("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            throw new Exception("INVALID_CREDENTIALS", e);
+        }
     }
 
     /**
@@ -112,7 +172,7 @@ public class PatientController {
      * @return {@code true} if a patient with the given email exists, {@code false} otherwise.
      */
     private Boolean existsPatient(String email) {
-        return patientRepository.findByEmail(email) != null;
+        return patientSignupRepository.findByUsername(email) != null;
     }
 
 }

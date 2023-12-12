@@ -2,6 +2,8 @@ package edu.pav.PatientTrackerSystem.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 

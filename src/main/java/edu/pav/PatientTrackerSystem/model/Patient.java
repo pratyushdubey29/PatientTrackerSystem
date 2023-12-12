@@ -24,7 +24,6 @@ public class Patient {
     @Id
     @Column(name = "patient_id")
     @Setter(AccessLevel.NONE)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long patientId;
 
     /**
