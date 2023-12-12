@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
  * Controller class for handling operations related to doctors, including retrieval, filtering,
  * and signup functionalities.
  */
+@CrossOrigin
 @RestController
 public class DoctorController {
 
