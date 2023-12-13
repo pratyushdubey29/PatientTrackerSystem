@@ -135,7 +135,7 @@ public class PatientController {
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(appendedEmail);
 
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        final String token = jwtTokenUtil.generateToken(userDetails, Constants.PATIENT);
 
 
         Patient patient= patientRepository.findByEmail(userName);

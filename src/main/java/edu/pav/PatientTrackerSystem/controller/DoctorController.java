@@ -206,7 +206,7 @@ public class DoctorController {
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(appendedEmail);
 
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        final String token = jwtTokenUtil.generateToken(userDetails, Constants.DOCTOR);
 
 
         Doctor doctor = doctorRepository.findByEmail(userName);
