@@ -93,7 +93,7 @@ public class PatientController {
     public BaseResponse<PatientsLogin> signup(@RequestBody PatientSignupRequest request) {
 
         String appendedEmail = request.getAppendedEmail();
-        assert appendedEmail.startsWith(Constants.PATIENT + ":");
+        assert appendedEmail.startsWith(Constants.PATIENT + Constants.COLON);
         String userName = request.getAppendedEmail().substring(8);
 
         PatientsLogin signupDetails = PatientsLogin.builder()
@@ -129,7 +129,7 @@ public class PatientController {
     public BaseResponse<LoginResponse> login(@RequestBody LoginRequest request) throws Exception {
 
         String appendedEmail = request.getAppendedUsername();
-        assert appendedEmail.startsWith(Constants.PATIENT + ":");
+        assert appendedEmail.startsWith(Constants.PATIENT + Constants.COLON);
         String userName = request.getAppendedUsername().substring(8);
 
         authenticate(appendedEmail, request.getPassword());

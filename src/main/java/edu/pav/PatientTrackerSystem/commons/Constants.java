@@ -5,7 +5,19 @@ package edu.pav.PatientTrackerSystem.commons;
  * These constants are used for consistent string values throughout the application.
  */
 public final class Constants {
+    public static final String MD5 = "MD5";
+    public static final String ADMIN_EMAIL = "patienttrackingsystem.admn@gmail.com";
+    public static final String UNAUTHORIZED = "Unauthorized";
+    public static final String AUTHORIZATION = "Authorization";
     public static final String EMPTY_STRING = "";
+
+    public static final String BEARER_START = "Bearer ";
+    public static final Integer BEARER_SUBSTRING_INDEX = 7;
+    public static final Integer DOCTOR_SUBSTRING_INDEX = 7;
+    public static final Integer PATIENT_SUBSTRING_INDEX = 8;
+    public static final String COLON = ":";
+
+    public static final String ALL = "*";
     public static final String PATIENT = "patient";
     public static final String DOCTOR = "doctor";
     public static final String CASE_ID = " Case Id:";

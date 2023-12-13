@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import edu.pav.PatientTrackerSystem.commons.Constants;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -53,7 +54,7 @@ public class JwtTokenUtil implements Serializable {
     //generate token for user
     public String generateToken(UserDetails userDetails, String userType) {
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, userType + ":" + userDetails.getUsername());
+        return doGenerateToken(claims, userType + Constants.COLON + userDetails.getUsername());
     }
 
     //while creating the token -
@@ -71,7 +72,7 @@ public class JwtTokenUtil implements Serializable {
     //validate token
     public Boolean validateToken(String token, UserDetails userDetails) {
         String username = getUsernameFromToken(token);
-        if (username.startsWith(Constants.DOCTOR + ":")) {
+        if (username.startsWith(Constants.DOCTOR + Constants.COLON)) {
             username = username.substring(7);
         } else {
             username = username.substring(8);
