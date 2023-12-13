@@ -102,7 +102,7 @@ public class PatientController {
                 .build();
 
         if(existsPatient(userName)) {
-            return new BaseResponse<>(HttpStatus.CONFLICT, Constants.DOCTOR_ALREADY_PRESENT_STRING,
+            return new BaseResponse<>(HttpStatus.CONFLICT, Constants.PATIENT_ALREADY_PRESENT_STRING,
                     PatientsLogin.builder().build());
         }
 
