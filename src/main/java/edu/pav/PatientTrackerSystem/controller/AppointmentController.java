@@ -173,7 +173,7 @@ public class AppointmentController {
             return new BaseResponse<>(HttpStatus.BAD_REQUEST,
                     Constants.INVALID_DATE_TIME_STRING, Appointment.builder().build());
         } else if (newDateTimeStatus == DateTimeFormatStatus.PAST_DATETIME){
-            return new BaseResponse<>(HttpStatus.OK,
+            return new BaseResponse<>(HttpStatus.BAD_REQUEST,
                     Constants.PAST_DATE_TIME_STRING, Appointment.builder().build());
         }
 
@@ -190,7 +190,7 @@ public class AppointmentController {
         // If the appointment is already completed in the past
         if(dateTimeFormatAndPastCheck(currentAppointment.getDate(), currentAppointment.getTime())
                 == DateTimeFormatStatus.PAST_DATETIME){
-            return new BaseResponse<>(HttpStatus.OK,
+            return new BaseResponse<>(HttpStatus.BAD_REQUEST,
                     Constants.CANNOT_EDIT_PAST_APPOINTMENT, Appointment.builder().build());
         }
 
