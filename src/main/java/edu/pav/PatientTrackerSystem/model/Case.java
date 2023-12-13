@@ -1,11 +1,12 @@
 package edu.pav.PatientTrackerSystem.model;
 
-import javax.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import javax.persistence.*;
 
 /**
  * Entity class representing a medical case.

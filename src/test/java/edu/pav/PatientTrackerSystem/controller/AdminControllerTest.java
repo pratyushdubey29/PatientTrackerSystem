@@ -6,19 +6,13 @@ import edu.pav.PatientTrackerSystem.model.Doctor;
 import edu.pav.PatientTrackerSystem.repository.DoctorRepository;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.http.HttpStatus;
 
-import javax.print.Doc;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class AdminControllerTest {
     @Mock

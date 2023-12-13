@@ -77,7 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.cors().configurationSource(corsConfigurationSource())
                 .and().csrf().disable()
                 // dont authenticate this particular request
-                .authorizeRequests().antMatchers("/doctors/signup", "/doctors/login", "/patients/signup", "/patients/login").permitAll().
+                .authorizeRequests().antMatchers("/doctors/signup", "/doctors/login", "/patients/signup", "/patients/login", "/reset-password/get-otp", "/reset-password/reset").permitAll().
                 // all other requests need to be authenticated
                         anyRequest().authenticated().and().
                 // make sure we use stateless session; session won't be used to

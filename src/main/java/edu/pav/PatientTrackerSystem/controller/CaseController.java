@@ -1,6 +1,7 @@
 package edu.pav.PatientTrackerSystem.controller;
 
 import edu.pav.PatientTrackerSystem.commons.Constants;
+import edu.pav.PatientTrackerSystem.commons.EmailService;
 import edu.pav.PatientTrackerSystem.commons.dto.BaseResponse;
 import edu.pav.PatientTrackerSystem.commons.dto.NewCaseRequest;
 import edu.pav.PatientTrackerSystem.commons.dto.UpdateCaseRequest;
@@ -9,18 +10,15 @@ import edu.pav.PatientTrackerSystem.model.Appointment;
 import edu.pav.PatientTrackerSystem.model.Case;
 import edu.pav.PatientTrackerSystem.repository.AppointmentRepository;
 import edu.pav.PatientTrackerSystem.repository.CaseRepository;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static edu.pav.PatientTrackerSystem.commons.Utils.*;
 
@@ -48,6 +46,11 @@ public class CaseController {
     @Autowired
     AppointmentRepository appointmentRepository;
 
+    /**
+     * Service to send realtime notifications by emails.
+     */
+    @Autowired
+    EmailService emailService;
     /**
      * Retrieves all medical cases.
      *
@@ -165,9 +168,11 @@ public class CaseController {
                 .doctorId(request.getDoctorId()).date(requestedDate).time(requestedTime)
                 .build();
 
-        BaseResponse response = appointmentController.bookAppointment(newAppointment);
+        BaseResponse response = appointmentController.bookAppointment(newAppointment,
+                Constants.NEW_APPOINTMENT_AND_CASE_EMAIL_SUBJECT_STRING,
+                Constants.NEW_APPOINTMENT_AND_CASE_EMAIL_BODY_STRING);
 
-        if (!Objects.equals(response.getMsg(), Constants.SUCCESS)){
+        if (!Objects.equals(response.getMsg(), Constants.SCHEDULE_APPOINTMENT_SUCCESSFUL)){
             TransactionInterceptor.currentTransactionStatus().setRollbackOnly();
         }
         return response;
@@ -189,6 +194,13 @@ public class CaseController {
         retrievedCase.get(0).setMedicines(request.getMedicines());
         retrievedCase.get(0).setCost(request.getCost());
         Case updatedCase = caseRepository.save(retrievedCase.get(0));
+
+        HashMap<String, ArrayList<Long>> userList = new HashMap<>();
+        userList.put(Constants.DOCTOR, new ArrayList<>(Collections.singletonList(updatedCase.getDoctorId())));
+        userList.put(Constants.PATIENT, new ArrayList<>(Collections.singletonList(updatedCase.getPatientId())));
+        String emailBody = Constants.CASE_UPDATED_EMAIL_BODY_STRING + Constants.CASE_ID + updatedCase.getCaseId();
+        emailService.alertUsers(userList, Constants.CASE_UPDATES_EMAIL_SUBJECT_STRING, emailBody);
+
         return new BaseResponse(HttpStatus.OK, Constants.SUCCESS, updatedCase);
     }
 

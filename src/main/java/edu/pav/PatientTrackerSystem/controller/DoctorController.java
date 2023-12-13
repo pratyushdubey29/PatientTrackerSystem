@@ -1,8 +1,10 @@
 package edu.pav.PatientTrackerSystem.controller;
 
 import edu.pav.PatientTrackerSystem.commons.Constants;
+import edu.pav.PatientTrackerSystem.commons.Utils;
 import edu.pav.PatientTrackerSystem.commons.dto.BaseResponse;
 import edu.pav.PatientTrackerSystem.commons.dto.DoctorSignupRequest;
+import edu.pav.PatientTrackerSystem.commons.dto.DoctorProfileEditRequest;
 import edu.pav.PatientTrackerSystem.commons.dto.LoginRequest;
 import edu.pav.PatientTrackerSystem.commons.dto.LoginResponse;
 import edu.pav.PatientTrackerSystem.commons.jwt.JwtTokenUtil;
@@ -12,6 +14,7 @@ import edu.pav.PatientTrackerSystem.model.DoctorsLogin;
 import edu.pav.PatientTrackerSystem.model.UserLogin;
 import edu.pav.PatientTrackerSystem.repository.DoctorRepository;
 import edu.pav.PatientTrackerSystem.repository.DoctorSignupRepository;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +25,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -221,6 +223,32 @@ public class DoctorController {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);
+        }
+    }
+
+
+    /**
+     * Edits the details of a doctor.
+     *
+     * @param request The DoctorProfileEditRequest containing edit details.
+     * @return BaseResponse indicating the success of the edit process.
+     */
+    @PostMapping(value = "/doctors/edit")
+    public BaseResponse editProfile(@RequestBody DoctorProfileEditRequest request) {
+        Optional<Doctor> optionalDoctor = doctorRepository.findById(request.getDoctorId());
+
+        if (optionalDoctor.isPresent()) {
+            Doctor existingDoctor = optionalDoctor.get();
+
+            existingDoctor.setAddress(request.getAddress());
+            existingDoctor.setHospital(request.getHospital());
+            existingDoctor.setSpeciality(request.getSpeciality());
+            existingDoctor.setPhoneNumber(request.getPhoneNumber());
+
+            Doctor updatedDoctor = doctorRepository.save(existingDoctor);
+            return new BaseResponse<>(HttpStatus.OK, Constants.SUCCESS, updatedDoctor);
+        } else {
+            return new BaseResponse<>(HttpStatus.NOT_FOUND, Constants.DOCTOR_ID_NOT_FOUND_STRING, Doctor.builder().build());
         }
     }
 
