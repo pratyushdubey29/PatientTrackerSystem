@@ -78,7 +78,7 @@ public class CaseController {
      * @param request UserTypeAndIDRequest containing user type and ID.
      * @return BaseResponse<List<Case>> containing the list of cases associated with the user.
      */
-    @GetMapping(value = "/cases/user-cases")
+    @PostMapping(value = "/cases/user-cases")
     public BaseResponse<List<Case>> getCaseByUser(@RequestBody UserTypeAndIDRequest request) {
         // TODO: Check if User with that Id exists or not; Discuss if required
         if (request.getUserType().equalsIgnoreCase(Constants.PATIENT)) {
