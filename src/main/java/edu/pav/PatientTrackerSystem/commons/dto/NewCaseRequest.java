@@ -8,11 +8,6 @@ import lombok.experimental.SuperBuilder;
 /**
  * Represents a request for creating a new medical case.
  * This class is used to encapsulate the necessary information for creating a new case.
- *
- * @param patientId The unique identifier of the patient associated with the case.
- * @param doctorId The unique identifier of the doctor responsible for the case.
- * @param time The time of the case, specified as a string.
- * @param date The date of the case, specified as a string.
  */
 @Data
 @AllArgsConstructor
