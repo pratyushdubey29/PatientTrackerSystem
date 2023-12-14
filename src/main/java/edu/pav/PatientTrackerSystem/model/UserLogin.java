@@ -1,23 +1,38 @@
 package edu.pav.PatientTrackerSystem.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.MappedSuperclass;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * This abstract class represents the login information for a user.
+ * It includes an embedded ID and password for authentication.
+ */
 @Data
 @SuperBuilder
 @MappedSuperclass
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class UserLogin {
 
-    @EmbeddedId
-    private UserLoginKey loginKey;
+    @Id
+    @Column
+    @Setter(AccessLevel.NONE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    /**
+     * The username associated with the user login.
+     */
+    @Column
+    private String username;
+
+    /**
+     * The password associated with the user login.
+     */
     @Column
     private String password;
 }

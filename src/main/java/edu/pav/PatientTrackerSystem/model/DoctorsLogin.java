@@ -1,11 +1,16 @@
 package edu.pav.PatientTrackerSystem.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Represents the entity class for storing login information specific to doctors.
+ * Extends the UserLogin class, inheriting common login attributes.
+ */
 @Entity
 @SuperBuilder
 @NoArgsConstructor

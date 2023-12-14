@@ -7,38 +7,18 @@ import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 
 /**
- * DoctorSignupRequest class represents the data structure for doctor signup requests.
- * It includes essential information such as email, password, date of birth, name, hospital,
- * speciality, address, and phone number.
+ * Represents a request object for doctor profile edit.
+ * This class is used to encapsulate the information required for a doctor to edit its profile in the system.
  */
 @Data
 @AllArgsConstructor
 @SuperBuilder
-public class DoctorSignupRequest {
-
+public class DoctorProfileEditRequest {
     /**
-     * The email address of the doctor.
+     * The id of the doctor.
      */
     @NonNull
-    private String appendedEmail;
-    
-    /**
-     * The password associated with the doctor's account.
-     */
-    @NonNull
-    private String password;
-    
-    /**
-     * The date of birth of the doctor in the format "YYYY-MM-DD".
-     */
-    @NonNull
-    private String dob;
-    
-    /**
-     * The name of the doctor.
-     */
-    @NonNull
-    private String name;
+    private Long doctorId;
 
     /**
      * The hospital where the doctor is affiliated.
@@ -64,4 +44,6 @@ public class DoctorSignupRequest {
     @NonNull
     @JsonProperty(value = "phone_number")
     private String phoneNumber;
+
 }
+

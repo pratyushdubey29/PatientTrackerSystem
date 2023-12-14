@@ -1,8 +1,14 @@
 package edu.pav.PatientTrackerSystem.repository;
 
+import edu.pav.PatientTrackerSystem.model.Doctor;
 import edu.pav.PatientTrackerSystem.model.DoctorsLogin;
-import edu.pav.PatientTrackerSystem.model.UserLoginKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DoctorSignupRepository extends JpaRepository<DoctorsLogin, UserLoginKey> {
+/**
+ * Repository interface for managing doctor sign-up data in the database.
+ * Extends JpaRepository for basic CRUD operations.
+ *
+ */
+public interface DoctorSignupRepository extends JpaRepository<DoctorsLogin, Integer> {
+    DoctorsLogin findByUsername(String username);
 }
