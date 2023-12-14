@@ -62,7 +62,6 @@ public class Appointment {
      * @param date      Date of the appointment.
      * @param time      Time of the appointment.
      */
-    // TODO: Remove constructor if not needed
     public Appointment(Long caseId, Long patientId, Long doctorId, String date, String time) {
         this.caseId = caseId;
         this.patientId = patientId;

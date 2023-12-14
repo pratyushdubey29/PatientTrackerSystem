@@ -83,7 +83,6 @@ public class CaseController {
      */
     @PostMapping(value = "/cases/user-cases")
     public BaseResponse<List<Case>> getCaseByUser(@RequestBody UserTypeAndIDRequest request) {
-        // TODO: Check if User with that Id exists or not; Discuss if required
         if (request.getUserType().equalsIgnoreCase(Constants.PATIENT)) {
             return new BaseResponse<>(HttpStatus.OK,
                     Constants.SUCCESS, caseRepository.findByPatientId(request.getId()));
@@ -140,8 +139,6 @@ public class CaseController {
     @Transactional
     public BaseResponse createNewCase(@RequestBody NewCaseRequest request) {
         //Creates a new case and a new appointment together
-
-        // TODO: Check if Users with those Ids exists or not; Discuss if required
 
         Long doctorId = request.getDoctorId();
         Long patientId = request.getPatientId();

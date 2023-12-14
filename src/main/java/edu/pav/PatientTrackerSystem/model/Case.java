@@ -74,7 +74,6 @@ public class Case {
      * @param medicines Medicines prescribed for the medical case.
      * @param cost      Cost associated with the medical case.
      */
-    // TODO: Remove constructor if not needed
     public Case(Long patientId, Long doctorId, String openDate, String closeDate, String symptoms, String medicines, Float cost) {
         this.patientId = patientId;
         this.doctorId = doctorId;

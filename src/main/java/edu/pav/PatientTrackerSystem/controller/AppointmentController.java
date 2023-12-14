@@ -113,11 +113,9 @@ public class AppointmentController {
 
         List<Appointment> retrievedAppointments;
         if (Objects.equals(request.getUserType().toLowerCase(), Constants.DOCTOR)) {
-            // TODO: Check if User with that Id exists or not; Discuss if required
             retrievedAppointments = filterPastOut(appointmentRepository.findByDoctorId(request.getId()),
                     formattedCurrDate, formattedCurrTime);
         } else {
-            // TODO: Check if User with that Id exists or not; Discuss if required
             retrievedAppointments = filterPastOut(appointmentRepository.findByPatientId(request.getId()),
                     formattedCurrDate, formattedCurrTime);
         }

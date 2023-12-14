@@ -12,7 +12,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class UserTypeAndIDRequest {
-    // TODO: Deprecate to RequestParams
 
     /**
      * The user type associated with the request.
