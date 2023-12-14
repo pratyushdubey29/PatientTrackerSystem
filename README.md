@@ -15,8 +15,8 @@ Before running the Patient Tracker System, ensure that your system meets the fol
 
 ### Recommended (Our) Versions
 TODO: Update Java version
-1. Java:  `21.0.1`
-2. SpringBoot:  `3.1.5`
+1. Java:  `11.0.16`
+2. SpringBoot:  `2.3.5`
 3. Maven:  `3.9.5`
 4. Mysql:  `8.1.0`
 
@@ -55,9 +55,20 @@ Make sure that you have a JDK installed and that the JAVA_HOME environment varia
 
 ## 4. High-Level Component Descriptions
 
+#### Commons
+- dto: Contains the request/response contract agreed with the frontend that the APIs must adhere to.
+- jwt: Contains the various classes responsible for the session management using JWT tokenization. JwtRequestFilter filters out the request without the tokens. WebSecurityConfig contains the access control for the various APIs.
+- Constants: In order to avoid the magic strings, this file contains the set of constants used across the repository.
+- EmailsService: Responsible for generation of emails during the cases of scheduling/rescheduling of appointments and also for the OTP generations.
+- Utils: Contains the static utility methods.
+
 #### Controllers
 - DoctorController: Handles operations related to doctors, including retrieval, filtering, and signup functionalities.
 - PatientController: Manages patient-related operations, such as patient retrieval, registration, and deletion.
+- AdminController: Manages the approval process for the doctors.
+- CaseController: Contains the CRUD APIs for the cases. A patient can open a new case and the doctor is responsible for closing the case. Read cases shall be invoked by both the doctor and the patient.
+- AppointmentController: Contains the CRUD APIs for the appointments. A patient schedules an appointment and both can fetch the appointments.
+- PasswordController: Both patient and doctor can reset their password using the password reset API and can generate the OTPs using the corresponding API.
 
 #### Models
 - Appointment: Represents appointments associated with a case, patient, and doctor.
@@ -66,8 +77,7 @@ Make sure that you have a JDK installed and that the JAVA_HOME environment varia
 - DoctorsLogin: Manages login information specific to doctors.
 - Patient: Represents a patient with details like name, address, and contact information.
 - PatientsLogin: Manages login information specific to patients.
-- UserLogin: Abstract class representing login information for users.
-- UserLoginKey: Represents the composite key for user login information.
+- UserLogin: Abstract class representing login information for users which shall be extended by both the DoctorsLogin and the PatientsLogin DTO.
 
 #### Repositories
 - AppointmentRepository: Manages appointments in the database, allowing retrieval based on doctor, patient, date, and time.

@@ -8,8 +8,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         AdminControllerTest.class,
-//        DoctorControllerTest.class,
-//        PatientControllerTest.class,
+        DoctorControllerTest.class,
+        PatientControllerTest.class,
         CaseControllerTest.class,
         AppointmentControllerTest.class,
         EmailServiceTest.class
