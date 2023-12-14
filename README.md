@@ -42,7 +42,19 @@ cd PatientTrackerSystem
 
 #### Test an API.
 1. We will be using Postman to make HTTP requests to our server in order to test out our APIs.
-2. Curl for a sample working API: `curl --location 'localhost:8080/doctors'` 
+2. Curl for a sample working API: `curl --location 'localhost:8080/doctors/signup' \
+--header 'UserType: doctor' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "dob": "1979-06-03",
+    "name": "Dr. Bobert Tea",
+    "hospital": "Downside Medical",
+    "speciality": "Neurosurgeon",
+    "address": "246 Tree St, Countryside",
+    "phoneNumber": "444-507-8901",
+    "appendedEmail": "doctor:dr880@example.com",
+    "password": "pass"
+}'`
 
 #### Java JDK not installed or misconfigured
 If a Java JDK is not installed or properly configured on your system, you may encounter the following error:
