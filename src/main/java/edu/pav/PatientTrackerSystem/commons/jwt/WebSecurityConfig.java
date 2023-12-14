@@ -1,5 +1,6 @@
 package edu.pav.PatientTrackerSystem.commons.jwt;
 
+import edu.pav.PatientTrackerSystem.commons.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -60,10 +61,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        List<String> allowOrigins = Arrays.asList("*");
+        List<String> allowOrigins = Arrays.asList(Constants.ALL);
         configuration.setAllowedOrigins(allowOrigins);
-        configuration.setAllowedMethods(singletonList("*"));
-        configuration.setAllowedHeaders(singletonList("*"));
+        configuration.setAllowedMethods(singletonList(Constants.ALL));
+        configuration.setAllowedHeaders(singletonList(Constants.ALL));
         //in case authentication is enabled this flag MUST be set, otherwise CORS requests will fail
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

@@ -43,7 +43,7 @@ public class EmailService {
      */
     public void sendSimpleMessage(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("patienttrackingsystem.admn@gmail.com");
+        message.setFrom(Constants.ADMIN_EMAIL);
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
@@ -58,7 +58,7 @@ public class EmailService {
      */
     public String getPatientEmail(long patientId) {
         Optional<Patient> patient = patientRepository.findById(patientId);
-        String patientEmail = "";
+        String patientEmail = Constants.EMPTY_STRING;
         if (patient.isPresent()) {
             patientEmail = patient.get().getEmail();
         }
@@ -73,7 +73,7 @@ public class EmailService {
      */
     public String getDoctorEmail(long doctorId) {
         Optional<Doctor> doctor = doctorRepository.findById(doctorId);
-        String doctorEmail = "";
+        String doctorEmail = Constants.EMPTY_STRING;
         if (doctor.isPresent()) {
             doctorEmail = doctor.get().getEmail();
         }
@@ -92,7 +92,7 @@ public class EmailService {
             String key = entry.getKey();
             ArrayList<Long> values = entry.getValue();
             for (Long value : values) {
-                String email = "";
+                String email = Constants.EMPTY_STRING;
                 if (Objects.equals(key, Constants.DOCTOR)) {
                     email = getDoctorEmail(value);
                 } else if (Objects.equals(key, Constants.PATIENT)) {

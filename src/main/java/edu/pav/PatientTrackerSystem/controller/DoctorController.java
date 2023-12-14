@@ -165,7 +165,7 @@ public class DoctorController {
     public BaseResponse<UserLogin> signup(@RequestBody DoctorSignupRequest request) {
 
         String appendedEmail = request.getAppendedEmail();
-        assert appendedEmail.startsWith(Constants.DOCTOR + ":");
+        assert appendedEmail.startsWith(Constants.DOCTOR + Constants.COLON);
         String userName = request.getAppendedEmail().substring(7);
 
         DoctorsLogin signupDetails = DoctorsLogin.builder()
@@ -201,7 +201,7 @@ public class DoctorController {
     public BaseResponse<LoginResponse> login(@RequestBody LoginRequest request) throws Exception {
 
         String appendedEmail = request.getAppendedUsername();
-        assert appendedEmail.startsWith(Constants.DOCTOR + ":");
+        assert appendedEmail.startsWith(Constants.DOCTOR + Constants.COLON);
         String userName = request.getAppendedUsername().substring(7);
 
         authenticate(appendedEmail, request.getPassword());

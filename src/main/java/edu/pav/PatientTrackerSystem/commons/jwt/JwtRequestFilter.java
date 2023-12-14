@@ -27,30 +27,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-//    @Autowired
-//    public JwtRequestFilter(@Qualifier("jwtDoctorUserDetailsServiceBean") JwtDoctorUserDetailsService jwtDoctorUserDetailsServiceBean,
-//                             @Qualifier("jwtPatientUserDetailsServiceBean") JwtPatientUserDetailsService jwtPatientDetailsServiceBean,
-//                            JwtTokenUtil jwtTokenUtil) {
-//        this.jwtPatientUserDetailsService = jwtPatientDetailsServiceBean;
-//        this.jwtDoctorUserDetailsService = jwtDoctorUserDetailsServiceBean;
-//        this.jwtTokenUtil = jwtTokenUtil;
-//    }
-
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        final String requestTokenHeader = request.getHeader("Authorization");
-
-        final String requestUserType = request.getHeader("UserType");
+        final String requestTokenHeader = request.getHeader(Constants.AUTHORIZATION);
 
         String username = null;
         String jwtToken = null;
         // JWT Token is in the form "Bearer token". Remove Bearer word and get
         // only the Token
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
+        if (requestTokenHeader != null && requestTokenHeader.startsWith(Constants.BEARER_START)) {
+            jwtToken = requestTokenHeader.substring(Constants.BEARER_SUBSTRING_INDEX);
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
@@ -67,14 +55,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(username);
 
-//            if (Constants.UserType.DOCTOR.toString().equals(requestUserType)) {
-//                userDetails = jwtDoctorUserDetailsService.loadUserByUsername(username);
-//            } else {
-//                userDetails = jwtPatientUserDetailsService.loadUserByUsername(username);
-//            }
-
-            // if token is valid configure Spring Security to manually set
-            // authentication
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
 
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(

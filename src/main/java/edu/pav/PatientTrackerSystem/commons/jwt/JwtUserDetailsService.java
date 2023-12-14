@@ -30,7 +30,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         UserLogin user = null;
         String username;
 
-        if (appendedUsername.startsWith(Constants.DOCTOR + ":")) {
+        if (appendedUsername.startsWith(Constants.DOCTOR + Constants.COLON)) {
              username = appendedUsername.substring(7);
              user = doctorSignupRepository.findByUsername(username);
         } else {
