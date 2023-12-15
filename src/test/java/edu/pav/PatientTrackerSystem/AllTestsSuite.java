@@ -5,6 +5,7 @@ import edu.pav.PatientTrackerSystem.controller.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+//Run this to run all the test cases.
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         AdminControllerTest.class,
