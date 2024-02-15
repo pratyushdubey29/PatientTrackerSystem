@@ -1,5 +1,7 @@
 # Patient Tracker System
 
+## Contributors: Anshumaan Chauhan, Pratyush Dubey, Varun Shah
+
 ## 1. Project Description
 
 The Patient Tracker System is a comprehensive solution for medical institutions to efficiently manage patient information, doctor details, appointments, and medical cases. It offers a user-friendly interface for doctors and staff to streamline their workflow and enhance patient care.
